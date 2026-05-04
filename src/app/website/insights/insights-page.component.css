@@ -1,0 +1,45 @@
+.insights-page {
+  background: #070d1a;
+  min-height: 100vh;
+  padding-top: 84px;
+}
+
+.container {
+  width: min(1160px, 92%);
+  margin: 0 auto;
+}
+
+.hero {
+  padding: 60px 0 30px;
+  background:
+    radial-gradient(circle at 18% 20%, rgba(129, 140, 248, 0.2), transparent 38%),
+    #0a1020;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.2);
+}
+
+.eyebrow {
+  margin: 0 0 10px;
+  color: #93c5fd;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  font-size: 0.74rem;
+  font-weight: 700;
+}
+
+h1 {
+  margin: 0 0 14px;
+  color: #f8fafc;
+  font-size: clamp(1.9rem, 3.7vw, 2.8rem);
+  line-height: 1.14;
+}
+
+p {
+  margin: 0;
+  color: #cbd5e1;
+  line-height: 1.7;
+  max-width: 68ch;
+}
+
+.content {
+  padding: 32px 0 60px;
+}

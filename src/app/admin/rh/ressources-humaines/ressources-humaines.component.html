@@ -1,0 +1,126 @@
+﻿<div class="rh-page">
+
+  <!-- Messages -->
+  <div class="alert alert-success" *ngIf="successMsg">{{ successMsg }}</div>
+  <div class="alert alert-error" *ngIf="errorMsg">{{ errorMsg }}</div>
+
+  <!-- Header -->
+  <div class="rh-header">
+    <div>
+      <h2 class="rh-title"><i class="fas fa-users-cog"></i> Ressources Humaines</h2>
+      <p class="rh-subtitle">Gérez les accès système</p>
+    </div>
+  </div>
+
+  <div class="rh-panel">
+    <div class="panel-toolbar">
+      <h3 class="panel-title" style="color:white; margin:0;"><i class="fas fa-users"></i> Accès Utilisateurs</h3>
+      <button class="btn-gold" (click)="openAddUser()">
+        <i class="fas fa-plus"></i> Nouvel Utilisateur
+      </button>
+    </div>
+
+    <!-- Table Utilisateurs -->
+    <div class="rh-table-wrap">
+      <table class="rh-table">
+        <thead>
+          <tr>
+            <th>Nom</th>
+            <th>Email</th>
+            <th>Rôle</th>
+            <th>Statut</th>
+            <th style="text-align: right;">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngIf="userLoading">
+            <td colspan="5" class="text-center py-4 text-muted">Chargement...</td>
+          </tr>
+          <tr *ngIf="!userLoading && utilisateurs.length === 0">
+            <td colspan="5" class="text-center py-4 text-muted">Aucun utilisateur trouvé.</td>
+          </tr>
+          <tr *ngFor="let u of utilisateurs">
+            <td class="member-name">{{ u.nom }}</td>
+            <td style="color: rgba(226,232,240,.7);">{{ u.email }}</td>
+            <td>
+              <span class="role-chip" [style.background]="getRoleBadge(u.role)">
+                {{ getRoleLabel(u.role) }}
+              </span>
+            </td>
+            <td>
+              <span class="status-badge" [class.active]="u.actif" [class.inactive]="!u.actif">
+                {{ u.actif ? 'Actif' : 'Inactif' }}
+              </span>
+            </td>
+            <td>
+              <div class="actions" style="justify-content: flex-end;">
+                <button class="btn-icon btn-edit" (click)="openEditUser(u)" title="Modifier">
+                  <i class="fas fa-pen"></i>
+                </button>
+                <button class="btn-icon btn-edit" style="color:#f59e0b; background: rgba(245,158,11,.1);" (click)="toggleActif(u)" [title]="u.actif ? 'Désactiver' : 'Activer'">
+                  <i class="fas" [class.fa-ban]="u.actif" [class.fa-check]="!u.actif"></i>
+                </button>
+                <button class="btn-icon btn-del" *ngIf="u.role !== 'ADMIN'" (click)="deleteUser(u.id)" title="Supprimer">
+                  <i class="fas fa-trash"></i>
+                </button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Modal Utilisateur -->
+  <div class="modal-overlay" *ngIf="showUserModal">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3>{{ editingUserId ? "Modifier l'utilisateur" : 'Nouvel utilisateur' }}</h3>
+        <button class="modal-close" (click)="showUserModal = false"><i class="fas fa-times"></i></button>
+      </div>
+      
+      <form class="modal-form" [formGroup]="userForm" (ngSubmit)="saveUser()">
+        <div class="form-group">
+          <label>Nom complet *</label>
+          <input type="text" formControlName="nom" placeholder="Jean Dupont" />
+        </div>
+        
+        <div class="form-group">
+          <label>Email *</label>
+          <input type="email" formControlName="email" placeholder="jean@synexa.com" />
+        </div>
+        
+        <div class="form-group">
+          <label>Mot de passe {{ editingUserId ? '(laisser vide pour ne pas modifier)' : '*' }}</label>
+          <input type="password" formControlName="motDePasse" placeholder="Min. 6 caractères" />
+        </div>
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label>Rôle *</label>
+            <select formControlName="role">
+              <option value="CONSULTANT">Consultant</option>
+              <option value="ADMIN">Administrateur</option>
+            </select>
+          </div>
+          
+          <div class="form-group" style="justify-content:center;">
+             <div class="form-check" style="margin-top:15px;">
+               <input type="checkbox" id="userActif" formControlName="actif" />
+               <label for="userActif">Compte actif</label>
+             </div>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn-cancel" (click)="showUserModal = false">Annuler</button>
+          <button type="submit" class="btn-gold" [disabled]="userForm.invalid">
+            <i class="fas fa-save"></i> Enregistrer
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+

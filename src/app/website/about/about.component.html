@@ -1,0 +1,111 @@
+<app-navbar></app-navbar>
+
+<div class="about-page">
+
+  <!-- Hero Section -->
+  <section class="about-hero">
+    <div class="about-hero-overlay"></div>
+    <div class="container">
+      <div class="about-hero-content">
+        <span class="about-tag">À Propos</span>
+        <h1>Qui sommes-nous ?</h1>
+        <p>SYNEXA Consult est un groupe de conseil stratégique et opérationnel, avec une forte dimension d'innovation technologique et digitale, présent en Tunisie, en Europe et en Afrique.</p>
+        <a class="back-home-btn" routerLink="/">Retour à l'accueil</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Gold separator -->
+  <div class="gold-separator"></div>
+
+  <!-- Mission & Vision -->
+  <section class="mission-vision">
+    <div class="container">
+      <div class="mv-grid">
+        <div class="mv-card">
+          <div class="mv-icon"><i class="fas fa-bullseye"></i></div>
+          <h2>Notre Mission</h2>
+          <p>Accompagner les organisations dans leur transformation stratégique, technologique et opérationnelle, en leur apportant des solutions sur mesure, innovantes et à fort impact.</p>
+        </div>
+        <div class="mv-divider"></div>
+        <div class="mv-card">
+          <div class="mv-icon"><i class="fas fa-eye"></i></div>
+          <h2>Notre Vision</h2>
+          <p>Devenir le partenaire de référence en conseil et transformation digitale pour les entreprises et institutions africaines et européennes, avec des standards d'excellence comparables aux grands cabinets mondiaux.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Gold separator -->
+  <div class="gold-separator"></div>
+
+  <!-- Valeurs -->
+  <section class="values-section">
+    <div class="container">
+      <h2 class="section-title">Nos <span class="text-gold">Valeurs</span></h2>
+      <p class="section-subtitle">Les principes qui guident chacune de nos actions</p>
+      <div class="values-grid">
+        <div class="value-card glass-card" *ngFor="let v of values">
+          <div class="value-icon"><i [class]="v.icon"></i></div>
+          <h3>{{ v.title }}</h3>
+          <p>{{ v.desc }}</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Gold separator -->
+  <div class="gold-separator"></div>
+
+  <!-- Timeline -->
+  <section class="timeline-section">
+    <div class="container">
+      <h2 class="section-title">Notre <span class="text-gold">Histoire</span></h2>
+      <p class="section-subtitle">Un parcours d'excellence depuis 2018</p>
+      <div class="timeline">
+        <div class="timeline-item" *ngFor="let item of timeline; let i = index">
+          <div class="timeline-dot"></div>
+          <div class="timeline-content glass-card" [class.right]="i % 2 === 1">
+            <span class="timeline-year">{{ item.year }}</span>
+            <p>{{ item.event }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Gold separator -->
+  <div class="gold-separator"></div>
+
+  <!-- Bio Sahby Benamor -->
+  <section class="founder-section">
+    <div class="container">
+      <div class="founder-grid">
+        <div class="founder-image-block">
+          <div class="founder-avatar">
+            <i class="fas fa-user-tie"></i>
+          </div>
+        </div>
+        <div class="founder-content">
+          <span class="about-tag">Fondateur & Directeur Général</span>
+          <h2>Sahby Benamor</h2>
+          <p class="founder-subtitle">PMP Certified · Ex-Directeur KPMG</p>
+          <p class="founder-bio">
+            Sahby Benamor est un expert en gestion de projets et transformation organisationnelle, certifié PMP, avec une expérience de plus de 15 ans dans le conseil stratégique. Ancien Directeur chez KPMG, il a accompagné des organisations publiques et privées en Tunisie, en Europe et en Afrique dans leurs programmes de transformation.
+          </p>
+          <p class="founder-bio">
+            Fort de cette expertise, il a fondé SYNEXA Consult avec la vision de créer un cabinet de conseil africain d'excellence, capable d'intervenir sur les défis stratégiques, technologiques et opérationnels les plus complexes.
+          </p>
+          <div class="founder-tags">
+            <span class="ftag">Project Management</span>
+            <span class="ftag">Strategic Consulting</span>
+            <span class="ftag">Digital Transformation</span>
+            <span class="ftag">Financial Advisory</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</div>

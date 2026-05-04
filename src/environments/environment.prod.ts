@@ -1,0 +1,5 @@
+export const environment = {
+  production: true,
+  apiUrl: 'https://REMPLACE-PAR-TON-URL-RENDER.onrender.com/api',
+  chatbotUrl: 'https://REMPLACE-PAR-TON-URL-CHATBOT.onrender.com/chat'
+};

@@ -1,0 +1,122 @@
+<div class="admin-page-container">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="page-title-admin">GESTION DES RENDEZ-VOUS</h2>
+    <button (click)="loadRendezVous()" class="btn-refresh">
+      <i class="fas fa-sync-alt"></i> Actualiser
+    </button>
+  </div>
+
+  <div class="admin-card">
+    <div class="card-body p-0">
+      <div *ngIf="loading" class="text-center py-5">
+        <div class="spinner-border text-info" role="status">
+          <span class="visually-hidden">Chargement...</span>
+        </div>
+      </div>
+
+      <div *ngIf="!loading && rendezVous.length === 0" class="text-center py-5">
+        <p class="text-muted">Aucun rendez-vous trouvé.</p>
+      </div>
+
+      <div class="table-responsive" *ngIf="!loading && rendezVous.length > 0">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>NOM</th>
+              <th>EMAIL</th>
+              <th>TÉLÉPHONE</th>
+              <th>SERVICE</th>
+              <th>DATE ET HEURE</th>
+              <th>STATUT</th>
+              <th>ACTIONS</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let r of rendezVous; let even = even" [class.row-alt]="!even">
+              <td>{{ r.nom }}</td>
+              <td>{{ r.email }}</td>
+              <td>{{ r.telephone }}</td>
+              <td>{{ r.serviceChoisi }}</td>
+              <td>{{ r.dateRendezVous | date:'dd/MM/yyyy HH:mm' }}</td>
+              <td>
+                <span [class]="'badge-status ' + r.statut?.toLowerCase()">{{ r.statut }}</span>
+              </td>
+              <td>
+                <div class="action-buttons">
+                  <button *ngIf="r.statut !== 'CONFIRME'" 
+                          (click)="updateStatut(r.id, 'CONFIRME')" 
+                          class="btn-action btn-confirm" 
+                          title="Confirmer">
+                    <i class="fas fa-check"></i>
+                  </button>
+                  <button *ngIf="r.statut !== 'ANNULE'"
+                          (click)="updateStatut(r.id, 'ANNULE')"
+                          class="btn-action btn-cancel"
+                          title="Annuler">
+                    <i class="fas fa-times"></i>
+                  </button>
+                  <button *ngIf="r.statut === 'CONFIRME'"
+                          (click)="updateStatut(r.id, 'TERMINE')"
+                          class="btn-action btn-done"
+                          title="Marquer terminé">
+                    <i class="fas fa-flag-checkered"></i>
+                  </button>
+                  <button (click)="openMessageModal(r)"
+                          class="btn-action btn-msg"
+                          title="Envoyer un message">
+                    <i class="fas fa-comment-dots"></i>
+                  </button>
+                  <button (click)="deleteRendezVous(r.id)"
+                          class="btn-action btn-delete"
+                          title="Supprimer">
+                    <i class="fas fa-trash"></i>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Message -->
+<div class="rdv-msg-overlay" *ngIf="showMsgModal" (click)="closeMsgModal()">
+  <div class="rdv-msg-modal" (click)="$event.stopPropagation()">
+    <div class="rdv-msg-header">
+      <h3><i class="fas fa-comment-dots"></i> Envoyer un message</h3>
+      <button type="button" class="rdv-msg-close" (click)="closeMsgModal()">✕</button>
+    </div>
+    <div class="rdv-msg-body">
+      <p class="rdv-msg-to">
+        <i class="fas fa-user"></i> À : <strong>{{ rdvSelected?.nom }}</strong>
+        <span style="color:#9ca3af; margin-left:0.5rem;">{{ rdvSelected?.email }}</span>
+      </p>
+      <div class="rdv-msg-group">
+        <label>Sujet</label>
+        <input type="text" [(ngModel)]="msgSujet" class="rdv-msg-input" />
+      </div>
+      <div class="rdv-msg-group">
+        <label>Message *</label>
+        <textarea [(ngModel)]="msgContenu" rows="5" class="rdv-msg-input"
+          placeholder="Rédigez votre message ici..."></textarea>
+      </div>
+      <div class="rdv-msg-success" *ngIf="msgSuccess">
+        <i class="fas fa-check-circle"></i> {{ msgSuccess }}
+      </div>
+      <div class="rdv-msg-error" *ngIf="msgError">
+        <i class="fas fa-exclamation-circle"></i> {{ msgError }}
+      </div>
+    </div>
+    <div class="rdv-msg-footer">
+      <button type="button" class="rdv-btn-cancel" (click)="closeMsgModal()">Annuler</button>
+      <button type="button" class="rdv-btn-send"
+        [disabled]="!msgContenu.trim() || msgSending"
+        (click)="envoyerMessage()">
+        <i class="fas" [ngClass]="msgSending ? 'fa-spinner fa-spin' : 'fa-paper-plane'"></i>
+        {{ msgSending ? 'Envoi...' : 'Envoyer' }}
+      </button>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,142 @@
+<div class="fiche-page">
+  <!-- Header -->
+  <div class="fiche-header">
+    <button class="btn-back" (click)="goBack()"><i class="fas fa-arrow-left"></i> Retour</button>
+    <div class="fiche-title" *ngIf="client">
+      <div class="fiche-avatar">{{ (client.prenom?.[0] || '') + (client.nom?.[0] || '') | uppercase }}</div>
+      <div>
+        <h2>{{ client.prenom }} {{ client.nom }}</h2>
+        <span class="fiche-email">{{ client.email }}</span>
+      </div>
+      <span class="status-chip" [class.active]="client.actif !== false" [class.inactive]="client.actif === false">
+        <i [class]="client.actif !== false ? 'fas fa-check-circle' : 'fas fa-times-circle'"></i>
+        {{ client.actif !== false ? 'Compte actif' : 'Désactivé' }}
+      </span>
+    </div>
+  </div>
+
+  <div *ngIf="loading" class="loading-state"><div class="spinner"></div></div>
+
+  <div class="fiche-grid" *ngIf="!loading && client">
+
+    <!-- ── Informations ── -->
+    <div class="fiche-card">
+      <div class="card-head"><i class="fas fa-user-circle"></i> Informations</div>
+      <div class="card-body">
+        <div class="info-row"><span class="info-label"><i class="fas fa-envelope"></i> Email</span><span class="info-value">{{ client.email }}</span></div>
+        <div class="info-row"><span class="info-label"><i class="fas fa-phone"></i> Téléphone</span><span class="info-value">{{ client.telephone || '—' }}</span></div>
+        <div class="info-row"><span class="info-label"><i class="fas fa-building"></i> Entreprise</span><span class="info-value">{{ client.entreprise || '—' }}</span></div>
+        <div class="info-row"><span class="info-label"><i class="fas fa-calendar"></i> Inscription</span><span class="info-value">{{ client.dateCreation | date:'dd/MM/yyyy' }}</span></div>
+      </div>
+    </div>
+
+    <!-- ── Documents ── -->
+    <div class="fiche-card">
+      <div class="card-head">
+        <span><i class="fas fa-folder-open"></i> Documents</span>
+        <button class="btn-add" (click)="showDocModal = true"><i class="fas fa-plus"></i> Ajouter</button>
+      </div>
+      <div class="card-body p0">
+        <table class="fiche-table" *ngIf="documents.length > 0">
+          <thead><tr><th>Titre</th><th>Taille</th><th>Date</th></tr></thead>
+          <tbody>
+            <tr *ngFor="let doc of documents">
+              <td class="doc-title">{{ doc.titre }}</td>
+              <td>{{ formatBytes(doc.tailleFichier) }}</td>
+              <td>{{ doc.dateUpload | date:'dd/MM/yyyy' }}</td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="empty-cell" *ngIf="documents.length === 0"><i class="fas fa-folder"></i> Aucun document</div>
+      </div>
+    </div>
+
+    <!-- ── Contrats ── -->
+    <div class="fiche-card fiche-card-full">
+      <div class="card-head">
+        <span><i class="fas fa-file-contract"></i> Contrats & Signatures</span>
+        <button class="btn-add btn-add-green" (click)="showContratModal = true"><i class="fas fa-paper-plane"></i> Générer</button>
+      </div>
+      <div class="card-body p0">
+        <table class="fiche-table" *ngIf="contrats.length > 0">
+          <thead><tr><th>Titre</th><th>Statut</th><th>Créé le</th><th>Signature</th></tr></thead>
+          <tbody>
+            <tr *ngFor="let c of contrats">
+              <td><strong class="ct-titre">{{ c.titre }}</strong><br><small class="ct-desc">{{ c.description }}</small></td>
+              <td><span class="statut-badge" [ngClass]="getContratStatutClass(c.statut)">{{ c.statut }}</span></td>
+              <td>{{ c.dateCreation | date:'dd/MM/yyyy' }}</td>
+              <td>
+                <span *ngIf="c.statut === 'SIGNE'" class="sig-ok"><i class="fas fa-check-circle"></i> {{ c.dateSignature | date:'dd/MM HH:mm' }}</span>
+                <span *ngIf="c.statut !== 'SIGNE'" class="sig-wait">En attente</span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="empty-cell" *ngIf="contrats.length === 0"><i class="fas fa-file-contract"></i> Aucun contrat</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Modal Document -->
+<div class="modal-overlay" *ngIf="showDocModal" (click)="showDocModal = false">
+  <div class="modal-box" (click)="$event.stopPropagation()">
+    <div class="modal-head">
+      <h3><i class="fas fa-upload"></i> Ajouter un document</h3>
+      <button class="modal-close" (click)="showDocModal = false"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label>Titre <span class="req">*</span></label>
+        <input type="text" [(ngModel)]="nouveauDocTitle" class="form-ctrl" placeholder="Nom du document">
+      </div>
+      <div class="form-group">
+        <label>Description</label>
+        <input type="text" [(ngModel)]="nouveauDocDesc" class="form-ctrl" placeholder="Optionnel">
+      </div>
+      <div class="form-group">
+        <label>Fichier <span class="req">*</span></label>
+        <input type="file" (change)="onFileChange($event)" class="form-ctrl file-input">
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn-cancel" (click)="showDocModal = false" [disabled]="uploadingDoc">Annuler</button>
+      <button class="btn-gold" (click)="uploadDocument()" [disabled]="!nouveauDocTitle || !nouveauDocFile || uploadingDoc">
+        <i class="fas" [ngClass]="uploadingDoc ? 'fa-spinner fa-spin' : 'fa-upload'"></i> Uploader
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Contrat -->
+<div class="modal-overlay" *ngIf="showContratModal" (click)="showContratModal = false">
+  <div class="modal-box modal-lg" (click)="$event.stopPropagation()">
+    <div class="modal-head">
+      <h3><i class="fas fa-paper-plane"></i> Générer un contrat</h3>
+      <button class="modal-close" (click)="showContratModal = false"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label>Titre du contrat <span class="req">*</span></label>
+        <input type="text" [(ngModel)]="nouveauContratTitre" class="form-ctrl" placeholder="Ex: Contrat de conseil 2024">
+      </div>
+      <div class="form-group">
+        <label>Description courte</label>
+        <input type="text" [(ngModel)]="nouveauContratDesc" class="form-ctrl">
+      </div>
+      <div class="form-group">
+        <label>Fichier <span class="req">*</span> <small class="hint">PDF, Word</small></label>
+        <input type="file" (change)="onContratFileChange($event)" class="form-ctrl file-input" accept=".pdf,.doc,.docx">
+        <span class="file-ok" *ngIf="nouveauContratFileName"><i class="fas fa-check-circle"></i> {{ nouveauContratFileName }}</span>
+      </div>
+      <div class="info-box"><i class="fas fa-info-circle"></i> Le fichier sera envoyé au client pour signature électronique.</div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn-cancel" (click)="showContratModal = false">Annuler</button>
+      <button class="btn-green" (click)="genererContrat()" [disabled]="!nouveauContratTitre || !nouveauContratFichierBase64 || uploadingContrat">
+        <i class="fas fa-paper-plane"></i> Envoyer pour signature
+      </button>
+    </div>
+  </div>
+</div>

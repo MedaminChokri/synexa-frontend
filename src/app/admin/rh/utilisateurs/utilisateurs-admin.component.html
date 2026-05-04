@@ -1,0 +1,115 @@
+<div class="admin-section">
+  <div class="section-header">
+    <h2>Gestion des Utilisateurs</h2>
+    <button type="button" class="btn btn-add" (click)="openAddModal()">
+      <i class="fas fa-plus"></i> Ajouter un utilisateur
+    </button>
+  </div>
+
+  <div class="alert alert-success" *ngIf="successMsg">{{ successMsg }}</div>
+  <div class="alert alert-error" *ngIf="errorMsg">{{ errorMsg }}</div>
+
+  <div class="loading-spinner" *ngIf="loading && !showModal">
+    <div class="spinner"></div>
+  </div>
+
+  <div class="table-wrapper" *ngIf="!loading || showModal">
+    <table class="admin-table" *ngIf="utilisateurs.length > 0; else empty">
+      <thead>
+        <tr>
+          <th>NOM</th>
+          <th>EMAIL</th>
+          <th>RÔLE</th>
+          <th>ACTIF</th>
+          <th>ACTIONS</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let u of utilisateurs">
+          <td>
+            <div class="user-info-cell">
+              <div class="user-avatar" [class]="'avatar-' + (u.role ? u.role.toLowerCase() : 'default')">{{ u.nom ? u.nom.charAt(0).toUpperCase() : '?' }}</div>
+              <span>{{ u.nom }}</span>
+            </div>
+          </td>
+          <td>{{ u.email }}</td>
+          <td>
+            <span [class]="'role-badge role-' + (u.role ? u.role.toLowerCase() : '')">{{ u.role }}</span>
+          </td>
+          <td>
+            <span class="badge" [class.badge-success]="u.actif" [class.badge-neutral]="!u.actif">
+              {{ u.actif ? 'Oui' : 'Non' }}
+            </span>
+          </td>
+          <td class="actions-cell">
+            <button type="button" class="btn btn-edit" (click)="openEditModal(u)">
+              <i class="fas fa-edit"></i> Modifier
+            </button>
+            <a [routerLink]="['/admin/dashboard/fiche-client', u.id]" class="btn btn-info" *ngIf="u.role === 'CLIENT'" style="background: #0ea5e9; color: white;">
+              <i class="fas fa-eye"></i> Voir Fiche
+            </a>
+            <button type="button" class="btn btn-delete"
+                    (click)="deleteUser(u.id)"
+                    *ngIf="u.role !== 'ADMIN'"
+                    title="Supprimer cet utilisateur">
+              <i class="fas fa-trash"></i> Supprimer
+            </button>
+            <span class="admin-protected-badge" *ngIf="u.role === 'ADMIN'" title="L'administrateur ne peut pas être supprimé">
+              <i class="fas fa-shield-alt"></i> Protégé
+            </span>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <ng-template #empty>
+      <div class="empty-state" *ngIf="!loading">Aucun utilisateur trouvé.</div>
+    </ng-template>
+  </div>
+
+  <!-- Modal Utilisateur -->
+  <div class="modal-overlay" *ngIf="showModal" (click)="closeModal()">
+    <div class="modal" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h3>{{ editingUserId ? 'Modifier l\'utilisateur' : 'Ajouter un utilisateur' }}</h3>
+        <button type="button" class="modal-close" (click)="closeModal()">✕</button>
+      </div>
+      <form [formGroup]="userForm" (ngSubmit)="onSubmit()">
+        <div class="form-group">
+          <label>Nom complet *</label>
+          <input type="text" formControlName="nom" placeholder="Nom complet de l'utilisateur" />
+        </div>
+        <div class="form-group">
+          <label>Email *</label>
+          <input type="email" formControlName="email" placeholder="email@exemple.com" />
+        </div>
+        <div class="form-group">
+          <label>Mot de passe {{ editingUserId ? '(laisser vide si inchangé)' : '*' }}</label>
+          <input type="password" formControlName="motDePasse" placeholder="Minimum 6 caractères" />
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Rôle *</label>
+            <select formControlName="role">
+              <option value="ADMIN">ADMIN</option>
+              <option value="CONSULTANT">CONSULTANT</option>
+              <option value="CLIENT">CLIENT</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Statut</label>
+            <div class="checkbox-group" style="margin-top: 10px;">
+              <label>
+                <input type="checkbox" formControlName="actif" />
+                Compte actif
+              </label>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-cancel" (click)="closeModal()">Annuler</button>
+          <button type="submit" class="btn btn-save" [disabled]="userForm.invalid">Enregistrer</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

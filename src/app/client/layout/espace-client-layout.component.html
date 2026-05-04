@@ -1,0 +1,127 @@
+<div class="espace-client">
+
+  <!-- Sidebar -->
+  <aside class="ec-sidebar">
+    <div class="ec-logo">
+      <div class="ec-logo-icon"><i class="fas fa-layer-group"></i></div>
+      <span class="logo-text">SYNEXA</span>
+      <span class="logo-sub">Espace Client</span>
+    </div>
+
+    <div class="ec-profile">
+      <div class="ec-avatar">{{ clientName ? clientName.charAt(0).toUpperCase() : 'C' }}</div>
+      <div class="ec-profile-info">
+        <span class="ec-profile-name">{{ clientName }}</span>
+        <span class="ec-profile-role">Client</span>
+      </div>
+    </div>
+
+    <nav class="ec-nav">
+      <div class="ec-nav-group-title">Navigation</div>
+      <a class="ec-nav-item" routerLink="/espace-client/dashboard" [class.active]="isActive('/espace-client/dashboard')">
+        <span class="ec-nav-icon icon-home"><i class="fas fa-home"></i></span>
+        <span class="ec-nav-label">Tableau de bord</span>
+      </a>
+
+      <div class="ec-nav-group-title">Services &amp; Projets</div>
+      <a class="ec-nav-item" routerLink="/espace-client/missions" [class.active]="isActive('/espace-client/missions')">
+        <span class="ec-nav-icon icon-missions"><i class="fas fa-rocket"></i></span>
+        <span class="ec-nav-label">Missions</span>
+      </a>
+      <a class="ec-nav-item" routerLink="/espace-client/contrats" [class.active]="isActive('/espace-client/contrats')">
+        <span class="ec-nav-icon icon-contrats"><i class="fas fa-file-signature"></i></span>
+        <span class="ec-nav-label">Contrats</span>
+      </a>
+      <a class="ec-nav-item" routerLink="/espace-client/documents" [class.active]="isActive('/espace-client/documents')">
+        <span class="ec-nav-icon icon-documents"><i class="fas fa-folder-open"></i></span>
+        <span class="ec-nav-label">Documents</span>
+      </a>
+      <a class="ec-nav-item" routerLink="/espace-client/factures" [class.active]="isActive('/espace-client/factures')">
+        <span class="ec-nav-icon icon-factures"><i class="fas fa-file-invoice-dollar"></i></span>
+        <span class="ec-nav-label">Factures</span>
+      </a>
+
+      <div class="ec-nav-group-title">Communication</div>
+      <a class="ec-nav-item" routerLink="/espace-client/rendez-vous" [class.active]="isActive('/espace-client/rendez-vous')">
+        <span class="ec-nav-icon icon-rdv"><i class="fas fa-calendar-alt"></i></span>
+        <span class="ec-nav-label">Rendez-vous</span>
+      </a>
+      <a class="ec-nav-item" routerLink="/espace-client/messages" [class.active]="isActive('/espace-client/messages')">
+        <span class="ec-nav-icon icon-messages"><i class="fas fa-comments"></i></span>
+        <span class="ec-nav-label">Communications</span>
+        <span class="ec-nav-badge" *ngIf="messagesNonLus > 0">{{ messagesNonLus }}</span>
+      </a>
+
+      <div class="ec-nav-group-title">Plus</div>
+      <a class="ec-nav-item" routerLink="/espace-client/historique" [class.active]="isActive('/espace-client/historique')">
+        <span class="ec-nav-icon icon-historique"><i class="fas fa-history"></i></span>
+        <span class="ec-nav-label">Historique</span>
+      </a>
+      <a class="ec-nav-item" routerLink="/espace-client/profil" [class.active]="isActive('/espace-client/profil')">
+        <span class="ec-nav-icon icon-profil"><i class="fas fa-user-cog"></i></span>
+        <span class="ec-nav-label">Mon Profil</span>
+      </a>
+
+      <div class="ec-nav-group-title">Assistant</div>
+      <a class="ec-nav-item" routerLink="/espace-client/assistant" [class.active]="isActive('/espace-client/assistant')">
+        <span class="ec-nav-icon ec-nav-icon-bot"><i class="fas fa-robot"></i></span>
+        <span class="ec-nav-label">Assistant IA</span>
+      </a>
+    </nav>
+
+    <div class="ec-sidebar-footer">
+      <span class="ec-footer-version">SYNEXA v2.0</span>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <div class="ec-main">
+    <header class="ec-topbar">
+      <div class="ec-topbar-left">
+        <h1 class="ec-page-title">Espace Client</h1>
+      </div>
+      <div class="ec-topbar-right">
+        <span class="client-welcome">Bonjour, {{ clientName }}</span>
+
+        <!-- Cloche notifications -->
+        <div class="notif-wrapper" (click)="toggleNotifDropdown()">
+          <button type="button" class="notif-btn" title="Notifications">
+            <i class="fas fa-bell"></i>
+            <span class="notif-dot" *ngIf="notifNonLues > 0">{{ notifNonLues }}</span>
+          </button>
+          <div class="notif-dropdown" *ngIf="notifOpen">
+            <div class="notif-dropdown-header">
+              <span>Notifications</span>
+              <span class="notif-count-badge" *ngIf="notifNonLues > 0">{{ notifNonLues }} nouvelle(s)</span>
+            </div>
+            <div class="notif-list" *ngIf="dernieresNotifs.length > 0">
+              <div class="notif-item" *ngFor="let n of dernieresNotifs" [class.unread]="!n.lu">
+                <i class="fas fa-circle notif-item-dot"></i>
+                <div class="notif-item-body">
+                  <span class="notif-item-title">{{ n.titre }}</span>
+                  <span class="notif-item-date">{{ n.dateCreation | date:'dd/MM HH:mm' }}</span>
+                </div>
+              </div>
+            </div>
+            <div class="notif-empty" *ngIf="dernieresNotifs.length === 0">
+              <i class="fas fa-bell-slash"></i>
+              <p>Aucune notification</p>
+            </div>
+            <a routerLink="/espace-client/notifications" class="notif-voir-tout" (click)="notifOpen = false">
+              Voir toutes les notifications <i class="fas fa-arrow-right"></i>
+            </a>
+          </div>
+        </div>
+
+        <!-- Bouton Déconnexion en haut à droite -->
+        <button type="button" class="ec-logout-topbar" (click)="logout()" title="Déconnexion" aria-label="Déconnexion">
+          <i class="fas fa-sign-out-alt"></i>
+        </button>
+      </div>
+    </header>
+
+    <div class="ec-content">
+      <router-outlet></router-outlet>
+    </div>
+  </div>
+</div>

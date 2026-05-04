@@ -1,0 +1,73 @@
+<div class="auth-shell">
+  <div class="verify-card">
+
+    <!-- Logo -->
+    <div class="verify-logo">
+      <span class="logo-text">SYNEXA</span>
+    </div>
+
+    <!-- Icône -->
+    <div class="verify-icon">
+      <i class="fas fa-envelope-open-text"></i>
+    </div>
+
+    <h2>Vérifiez votre email</h2>
+    <p class="verify-sub">
+      Un code à 6 chiffres a été envoyé à<br>
+      <strong>{{ email }}</strong>
+    </p>
+
+    <!-- Timer expiration -->
+    <div class="expiration-bar" *ngIf="expirationSeconds > 0">
+      <i class="fas fa-clock"></i>
+      Le code expire dans <strong>{{ expirationLabel }}</strong>
+    </div>
+    <div class="expiration-bar expired" *ngIf="expirationSeconds === 0">
+      <i class="fas fa-exclamation-triangle"></i> Code expiré — renvoyez un nouveau code
+    </div>
+
+    <!-- Messages -->
+    <div class="success-alert" *ngIf="successMessage">
+      <i class="fas fa-check-circle"></i> {{ successMessage }}
+    </div>
+    <div class="error-alert" *ngIf="errorMessage">
+      <i class="fas fa-exclamation-circle"></i> {{ errorMessage }}
+    </div>
+
+    <!-- Input code -->
+    <div class="code-input-wrapper">
+      <input
+        type="text"
+        class="code-input"
+        [(ngModel)]="code"
+        maxlength="6"
+        placeholder="000000"
+        inputmode="numeric"
+        pattern="[0-9]*"
+        autofocus
+      />
+    </div>
+
+    <!-- Bouton vérifier -->
+    <button class="btn-verify" (click)="verifier()" [disabled]="loading || code.length !== 6 || expirationSeconds === 0">
+      <span *ngIf="loading" class="spin"><i class="fas fa-spinner fa-spin"></i></span>
+      <span *ngIf="!loading">Vérifier mon email</span>
+      <span *ngIf="loading">Vérification...</span>
+    </button>
+
+    <!-- Renvoyer code -->
+    <div class="resend-section">
+      <span>Vous n'avez pas reçu le code ?</span>
+      <button class="btn-resend" (click)="renvoyerCode()" [disabled]="resendCooldown > 0 || resending">
+        <span *ngIf="resendCooldown > 0">Renvoyer dans {{ resendCooldown }}s</span>
+        <span *ngIf="resendCooldown === 0 && !resending">Renvoyer le code</span>
+        <span *ngIf="resending"><i class="fas fa-spinner fa-spin"></i> Envoi...</span>
+      </button>
+    </div>
+
+    <a routerLink="/signup" class="back-link">
+      <i class="fas fa-arrow-left"></i> Retour à l'inscription
+    </a>
+
+  </div>
+</div>

@@ -1,0 +1,44 @@
+
+<section class="insights-section" id="insights">
+  <div class="container">
+    <h2 class="section-title">Insights <span class="text-gradient">& Ressources</span></h2>
+    <p class="section-subtitle">Articles, analyses et études de cas par nos experts</p>
+
+    <div class="insights-tabs">
+      <button type="button" class="tab-btn" [class.active]="activeTab === 'BLOG'" (click)="setTab('BLOG')">Blog</button>
+      <button type="button" class="tab-btn" [class.active]="activeTab === 'ETUDE_CAS'" (click)="setTab('ETUDE_CAS')">Études de Cas</button>
+    </div>
+
+    <div *ngIf="loading" class="loading-container">
+      <span class="spinner"></span>
+    </div>
+
+    <div class="insights-grid" *ngIf="!loading">
+      <div class="insight-card glass-card animate-on-scroll" *ngFor="let insight of insights">
+        <div class="insight-image-wrapper">
+          <div class="insight-image-placeholder" *ngIf="!insight.imageUrl || insight.imageUrl === ''">
+            <i class="fas fa-newspaper"></i>
+          </div>
+          <img *ngIf="insight.imageUrl && insight.imageUrl !== ''"
+               [src]="insight.imageUrl"
+               [alt]="insight.titre"
+               class="insight-image">
+          <span class="insight-categorie">{{ insight.categorie === 'BLOG' ? 'Blog' : 'Étude de Cas' }}</span>
+        </div>
+        <div class="insight-content">
+          <p class="insight-date"><i class="fas fa-calendar-alt"></i> {{ formatDate(insight.datePublication) }}</p>
+          <h3 class="insight-titre">{{ insight.titre }}</h3>
+          <p class="insight-resume">{{ insight.resume }}</p>
+          <div class="insight-footer">
+            <span class="insight-auteur"><i class="fas fa-user"></i> {{ insight.auteur }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="no-content" *ngIf="!loading && insights.length === 0">
+      <i class="fas fa-newspaper"></i>
+      <p>Aucun contenu disponible pour le moment.</p>
+    </div>
+  </div>
+</section>

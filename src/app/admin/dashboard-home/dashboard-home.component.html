@@ -1,0 +1,81 @@
+<div class="admin-dashboard-home">
+
+  <!-- Loading -->
+  <div *ngIf="loading" class="loading-container">
+    <div class="loading-spinner">
+      <div class="spinner-ring"></div>
+      <span>Chargement du tableau de bord...</span>
+    </div>
+  </div>
+
+  <div *ngIf="!loading">
+
+    <!-- SECTION: KPI CARDS -->
+    <div class="section-label">
+      <i class="fas fa-th-large"></i> VUE GLOBALE DU PROJET
+    </div>
+    <div class="kpi-grid">
+      <div class="kpi-card"
+        *ngFor="let card of kpiCards"
+        [style.--kpi-color]="card.color"
+        [style.--kpi-bg]="card.bgColor"
+        (click)="card.route && navigateTo(card.route)"
+        [class.kpi-clickable]="card.route">
+        <div class="kpi-icon-wrapper">
+          <i [class]="card.icon"></i>
+        </div>
+        <div class="kpi-info">
+          <div class="kpi-value">{{ card.value }}</div>
+          <div class="kpi-label">{{ card.label }}</div>
+          <div class="kpi-trend" *ngIf="card.trend" [class]="card.trendClass || ''">{{ card.trend }}</div>
+        </div>
+        <div class="kpi-glow"></div>
+      </div>
+    </div>
+
+    <!-- SECTION: ACTIVITE RECENTE -->
+    <div class="dashboard-middle">
+
+      <!-- CONTACTS RECENTS -->
+      <div class="dashboard-panel">
+        <div class="panel-header">
+          <h3><i class="fas fa-envelope"></i> Derniers contacts</h3>
+          <span class="panel-badge" (click)="navigateTo('/admin/dashboard/messages-clients')" style="cursor:pointer;">Voir tout</span>
+        </div>
+        <div class="activity-list">
+          <div class="activity-item" *ngFor="let c of recentContacts">
+            <div class="activity-dot" [class.unread]="!c.lu"></div>
+            <div class="activity-info">
+              <span class="activity-name">{{ c.nom || c.name || 'Contact' }}</span>
+              <span class="activity-service" *ngIf="c.service">{{ c.service }}</span>
+              <span class="activity-email">{{ c.email }}</span>
+            </div>
+            <span class="activity-date">{{ formatDate(c.dateCreation || c.dateEnvoi || c.date) }}</span>
+          </div>
+          <div class="empty-activity" *ngIf="recentContacts.length === 0">Aucun contact récent</div>
+        </div>
+      </div>
+
+      <!-- RDV RECENTS -->
+      <div class="dashboard-panel">
+        <div class="panel-header">
+          <h3><i class="fas fa-calendar-alt"></i> Derniers rendez-vous</h3>
+          <span class="panel-badge" (click)="navigateTo('/admin/dashboard/rendezvous')" style="cursor:pointer;">Voir tout</span>
+        </div>
+        <div class="activity-list">
+          <div class="activity-item" *ngFor="let r of recentRendezVous">
+            <div class="activity-status-dot" [ngClass]="getStatutClass(r.statut)"></div>
+            <div class="activity-info">
+              <span class="activity-name">{{ r.nom || r.name || 'RDV' }}</span>
+              <span class="activity-status" [ngClass]="getStatutClass(r.statut)">{{ getStatutLabel(r.statut) }}</span>
+            </div>
+            <span class="activity-date">{{ formatDate(r.dateCreation || r.date) }}</span>
+          </div>
+          <div class="empty-activity" *ngIf="recentRendezVous.length === 0">Aucun rendez-vous récent</div>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+</div>

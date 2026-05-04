@@ -1,0 +1,35 @@
+<div class="page-container">
+  <div class="page-header">
+    <div class="header-content">
+      <h2><i class="fas fa-folder-open"></i> Mes Documents</h2>
+      <p class="page-subtitle">Consultez et téléchargez les documents partagés par notre équipe</p>
+    </div>
+  </div>
+
+  <div *ngIf="loading" class="loading-state"><div class="spinner"></div></div>
+
+  <div class="docs-grid" *ngIf="!loading && documents.length > 0">
+    <div class="doc-card" *ngFor="let doc of documents">
+      <div class="doc-icon"><i class="fas" [ngClass]="getFileIcon(doc.typeFichier)"></i></div>
+      <div class="doc-info">
+        <h4>{{ doc.titre }}</h4>
+        <p class="doc-desc">{{ doc.description }}</p>
+        <div class="doc-meta">
+          <span><i class="fas fa-file-alt"></i> {{ doc.typeFichier || 'Fichier' }}</span>
+          <span><i class="fas fa-hdd"></i> {{ formatBytes(doc.tailleFichier) }}</span>
+          <span><i class="fas fa-calendar"></i> {{ doc.dateUpload | date:'dd/MM/yyyy' }}</span>
+        </div>
+      </div>
+      <button class="btn-download" (click)="downloadDocument(doc.id, doc.nomFichier)" [disabled]="pdfLoading[doc.id]">
+        <i class="fas" [ngClass]="pdfLoading[doc.id] ? 'fa-spinner fa-spin' : 'fa-download'"></i>
+        Télécharger
+      </button>
+    </div>
+  </div>
+
+  <div class="empty-state" *ngIf="!loading && documents.length === 0">
+    <div class="empty-icon"><i class="fas fa-folder-open"></i></div>
+    <h3>Aucun document</h3>
+    <p>Vous n'avez pas encore de documents partagés.</p>
+  </div>
+</div>

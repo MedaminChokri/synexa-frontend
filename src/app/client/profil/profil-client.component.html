@@ -1,0 +1,86 @@
+<div class="page-container">
+  <div class="page-header">
+    <h2><i class="fas fa-user-circle"></i> Mon Profil</h2>
+    <p class="page-subtitle">Gérez vos informations personnelles et votre sécurité</p>
+  </div>
+
+  <div class="cards-grid">
+    <!-- Profil -->
+    <div class="card">
+      <div class="card-title"><i class="fas fa-id-card"></i> Informations personnelles</div>
+      <div class="success-alert" *ngIf="profilSuccess"><i class="fas fa-check-circle"></i> {{ profilSuccess }}</div>
+      <div class="error-alert" *ngIf="profilError"><i class="fas fa-exclamation-circle"></i> {{ profilError }}</div>
+      <form [formGroup]="profilForm" (ngSubmit)="sauvegarderProfil()" *ngIf="profilForm">
+        <div class="form-row">
+          <div class="form-group">
+            <label>Prénom *</label>
+            <input formControlName="prenom" placeholder="Votre prénom" />
+          </div>
+          <div class="form-group">
+            <label>Nom *</label>
+            <input formControlName="nom" placeholder="Votre nom" />
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Email <span class="readonly-badge">Non modifiable</span></label>
+          <input [value]="clientEmail" disabled class="readonly-input" />
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Téléphone</label>
+            <input formControlName="telephone" placeholder="+216 XX XXX XXX" />
+          </div>
+          <div class="form-group">
+            <label>Entreprise</label>
+            <input formControlName="entreprise" placeholder="Nom de votre entreprise" />
+          </div>
+        </div>
+        <button type="submit" class="btn-save" [disabled]="profilForm.invalid || loading">
+          <i class="fas fa-save"></i> {{ loading ? 'Sauvegarde...' : 'Sauvegarder' }}
+        </button>
+      </form>
+    </div>
+
+    <!-- Mot de passe -->
+    <div class="card">
+      <div class="card-title"><i class="fas fa-lock"></i> Changer le mot de passe</div>
+      <div class="success-alert" *ngIf="mdpSuccess"><i class="fas fa-check-circle"></i> {{ mdpSuccess }}</div>
+      <div class="error-alert" *ngIf="mdpError"><i class="fas fa-exclamation-circle"></i> {{ mdpError }}</div>
+      <form [formGroup]="mdpForm" (ngSubmit)="changerMotDePasse()">
+        <div class="form-group">
+          <label>Mot de passe actuel *</label>
+          <input type="password" formControlName="ancienMdp" placeholder="••••••••" />
+        </div>
+        <div class="form-group">
+          <label>Nouveau mot de passe *</label>
+          <input type="password" formControlName="nouveauMdp" placeholder="Min. 8 caractères" />
+          <!-- Indicateur force -->
+          <div class="force-bar" *ngIf="mdpForm.get('nouveauMdp')?.value">
+            <div class="force-fill" [style.width]="(mdpForce / 3 * 100) + '%'" [style.background]="forceColor"></div>
+          </div>
+          <span class="force-label" [style.color]="forceColor" *ngIf="mdpForm.get('nouveauMdp')?.value">
+            {{ forceLabel }}
+          </span>
+        </div>
+        <div class="form-group">
+          <label>Confirmer nouveau mot de passe *</label>
+          <input type="password" formControlName="confirmerMdp" placeholder="••••••••" />
+        </div>
+        <div class="mdp-rules">
+          <span [class.ok]="mdpForm.get('nouveauMdp')?.value?.length >= 8">
+            <i class="fas fa-check-circle"></i> Min. 8 caractères
+          </span>
+          <span [class.ok]="hasMajuscule()">
+            <i class="fas fa-check-circle"></i> 1 majuscule
+          </span>
+          <span [class.ok]="hasChiffre()">
+            <i class="fas fa-check-circle"></i> 1 chiffre
+          </span>
+        </div>
+        <button type="submit" class="btn-save" [disabled]="mdpForm.invalid">
+          <i class="fas fa-key"></i> Changer le mot de passe
+        </button>
+      </form>
+    </div>
+  </div>
+</div>

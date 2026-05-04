@@ -1,0 +1,83 @@
+<div class="page-container">
+  <div class="page-header">
+    <div class="header-content">
+      <h2><i class="fas fa-chart-line"></i> Mon Analytique</h2>
+      <p class="page-subtitle">Aperçu global de votre activité et niveau de fidélité</p>
+    </div>
+    <button class="btn-primary" (click)="exporterRapport()" [disabled]="!analytics || loading">
+      <i class="fas fa-file-pdf"></i> Exporter mon rapport
+    </button>
+  </div>
+
+  <div *ngIf="loading" class="loading-state"><div class="spinner"></div></div>
+
+  <div *ngIf="!loading && analytics" class="analytics-content">
+    <div class="kpi-grid">
+      <div class="kpi-card">
+        <div class="kpi-icon"><i class="fas fa-envelope"></i></div>
+        <div class="kpi-info">
+          <span class="kpi-value">{{ analytics.total_demandes }}</span>
+          <span class="kpi-label">Demandes</span>
+        </div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-icon"><i class="fas fa-calendar-alt"></i></div>
+        <div class="kpi-info">
+          <span class="kpi-value">{{ analytics.total_rdv }}</span>
+          <span class="kpi-label">Rendez-vous</span>
+        </div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-icon"><i class="fas fa-rocket"></i></div>
+        <div class="kpi-info">
+          <span class="kpi-value">{{ analytics.total_missions }}</span>
+          <span class="kpi-label">Missions</span>
+        </div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-icon"><i class="fas fa-file-contract"></i></div>
+        <div class="kpi-info">
+          <span class="kpi-value">{{ analytics.total_contrats_signes }}</span>
+          <span class="kpi-label">Contrats</span>
+        </div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-icon"><i class="fas fa-folder-open"></i></div>
+        <div class="kpi-info">
+          <span class="kpi-value">{{ analytics.total_documents }}</span>
+          <span class="kpi-label">Documents</span>
+        </div>
+      </div>
+      <div class="kpi-card badge-card" [ngClass]="analytics.niveau_fidelite?.toLowerCase()">
+        <div class="kpi-icon">
+          <i class="fas fa-medal" *ngIf="analytics.niveau_fidelite === 'SILVER'" style="color: #c0c0c0;"></i>
+          <i class="fas fa-trophy" *ngIf="analytics.niveau_fidelite === 'GOLD'" style="color: #ffd700;"></i>
+          <i class="fas fa-crown" *ngIf="analytics.niveau_fidelite === 'PREMIUM'" style="color: #e5e4e2;"></i>
+        </div>
+        <div class="kpi-info">
+          <span class="kpi-value niveau-value">{{ analytics.niveau_fidelite }}</span>
+          <span class="kpi-label">Niveau Fidélité</span>
+        </div>
+      </div>
+    </div>
+    
+    <div class="charts-grid">
+      <div class="chart-card">
+        <div class="chart-header">Taux de confirmation (Rendez-vous)</div>
+        <div class="progress-circle-container">
+          <div class="progress-circle" [style.background]="'conic-gradient(#10b981 ' + analytics.taux_confirmation + '%, #374151 0)'">
+            <div class="progress-inner">{{ Math.round(analytics.taux_confirmation) }}%</div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="chart-card">
+        <div class="chart-header">Statistiques Détaillées</div>
+        <ul class="stats-list">
+          <li><span>Missions terminées</span> <strong>{{ analytics.missions_terminees }}</strong></li>
+          <li><span>Messages envoyés</span> <strong>{{ analytics.total_messages_envoyes }}</strong></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>

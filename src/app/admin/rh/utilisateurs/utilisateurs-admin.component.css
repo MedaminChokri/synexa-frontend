@@ -1,0 +1,81 @@
+/* User info cell with avatar */
+.user-info-cell {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.user-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 15px;
+  font-weight: 700;
+  color: #fff;
+  flex-shrink: 0;
+}
+
+.avatar-admin {
+  background: linear-gradient(135deg, #C4952A, #A07820);
+  box-shadow: 0 3px 8px rgba(196, 149, 42, 0.3);
+}
+
+.avatar-consultant {
+  background: linear-gradient(135deg, #06b6d4, #0891b2);
+  box-shadow: 0 3px 8px rgba(6, 182, 212, 0.3);
+}
+
+.avatar-client {
+  background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+  box-shadow: 0 3px 8px rgba(139, 92, 246, 0.3);
+}
+
+/* Role badges */
+.role-badge {
+  padding: 4px 14px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.role-admin {
+  background: rgba(196, 149, 42, 0.12);
+  color: #C4952A;
+  border: 1px solid rgba(196, 149, 42, 0.25);
+}
+
+.role-consultant {
+  background: rgba(6, 182, 212, 0.12);
+  color: #22d3ee;
+  border: 1px solid rgba(6, 182, 212, 0.25);
+}
+
+.role-client {
+  background: rgba(139, 92, 246, 0.12);
+  color: #a78bfa;
+  border: 1px solid rgba(139, 92, 246, 0.25);
+}
+
+/* Admin protected badge */
+.admin-protected-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #C4952A;
+  background: rgba(196, 149, 42, 0.08);
+  border: 1px solid rgba(196, 149, 42, 0.2);
+  cursor: default;
+}
+
+.admin-protected-badge i {
+  font-size: 13px;
+}

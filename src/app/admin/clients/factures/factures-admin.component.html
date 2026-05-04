@@ -1,0 +1,271 @@
+<div class="factures-admin-page">
+
+  <!-- Header -->
+  <div class="page-header">
+    <h2 class="page-title">
+      <i class="fas fa-file-invoice-dollar"></i>
+      Gestion des Factures
+    </h2>
+    <p class="page-subtitle">Créez et gérez les factures de vos clients</p>
+  </div>
+
+  <!-- Alerts -->
+  <div class="alert alert-success" *ngIf="successMessage">
+    <i class="fas fa-check-circle"></i> {{ successMessage }}
+  </div>
+  <div class="alert alert-error" *ngIf="errorMessage">
+    <i class="fas fa-exclamation-circle"></i> {{ errorMessage }}
+  </div>
+
+  <div class="layout">
+
+    <!-- Sidebar clients -->
+    <div class="clients-sidebar">
+      <div class="sidebar-header">
+        <i class="fas fa-users"></i>
+        <span>Clients</span>
+      </div>
+      <div class="loading-small" *ngIf="loading">
+        <i class="fas fa-spinner fa-spin"></i> Chargement...
+      </div>
+      <div class="client-list" *ngIf="!loading">
+        <div class="client-item"
+             *ngFor="let client of clients"
+             [class.active]="selectedClientId === client.id"
+             (click)="selectClient(client.id)">
+          <div class="client-avatar">{{ (client.prenom || client.nom || 'C').charAt(0).toUpperCase() }}</div>
+          <div class="client-info">
+            <span class="client-name">{{ getClientNom(client) }}</span>
+            <span class="client-company" *ngIf="client.entreprise">{{ client.entreprise }}</span>
+            <span class="client-email" *ngIf="!client.entreprise">{{ client.email }}</span>
+          </div>
+        </div>
+        <div class="empty-clients" *ngIf="clients.length === 0">
+          <i class="fas fa-user-slash"></i>
+          <p>Aucun client</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Zone factures -->
+    <div class="factures-area">
+
+      <!-- Pas de client sélectionné -->
+      <div class="no-selection" *ngIf="!selectedClientId">
+        <i class="fas fa-file-invoice-dollar"></i>
+        <p>Sélectionnez un client pour voir et gérer ses factures</p>
+      </div>
+
+      <ng-container *ngIf="selectedClientId">
+
+        <!-- Header client sélectionné -->
+        <div class="client-header">
+          <div class="client-header-info">
+            <div class="client-header-avatar">{{ (selectedClient?.prenom || selectedClient?.nom || 'C').charAt(0).toUpperCase() }}</div>
+            <div>
+              <h3>{{ getClientNom(selectedClient!) }}</h3>
+              <span *ngIf="selectedClient?.entreprise">{{ selectedClient?.entreprise }}</span>
+            </div>
+          </div>
+          <button class="btn-create" (click)="openCreateModal()">
+            <i class="fas fa-plus"></i> Nouvelle Facture
+          </button>
+        </div>
+
+        <!-- Stats -->
+        <div class="stats-row" *ngIf="filteredFactures.length > 0">
+          <div class="stat-card">
+            <span class="stat-label">Total TTC</span>
+            <span class="stat-value">{{ getTotalTTC() | number:'1.3-3' }} DT</span>
+          </div>
+          <div class="stat-card stat-payee">
+            <span class="stat-label">Payées</span>
+            <span class="stat-value">{{ getTotalPayees() | number:'1.3-3' }} DT</span>
+          </div>
+          <div class="stat-card stat-attente">
+            <span class="stat-label">En attente</span>
+            <span class="stat-value">{{ getTotalEnAttente() | number:'1.3-3' }} DT</span>
+          </div>
+        </div>
+
+        <!-- Filtres -->
+        <div class="filters-row">
+          <input type="text" class="filter-input" [(ngModel)]="searchTerm" (ngModelChange)="applyFilters()"
+                 placeholder="Rechercher par numéro ou objet...">
+          <select class="filter-select" [(ngModel)]="filterStatut" (ngModelChange)="applyFilters()">
+            <option value="">Tous les statuts</option>
+            <option value="EN_ATTENTE">En attente</option>
+            <option value="PAYEE">Payée</option>
+            <option value="EN_RETARD">En retard</option>
+            <option value="ANNULEE">Annulée</option>
+          </select>
+        </div>
+
+        <!-- Chargement -->
+        <div class="loading-factures" *ngIf="loadingFactures">
+          <div class="spinner"></div>
+          <span>Chargement des factures...</span>
+        </div>
+
+        <!-- Table factures -->
+        <div class="table-wrapper" *ngIf="!loadingFactures">
+          <table class="factures-table" *ngIf="filteredFactures.length > 0">
+            <thead>
+              <tr>
+                <th>Numéro</th>
+                <th>Objet</th>
+                <th>Montant HT</th>
+                <th>TVA</th>
+                <th>Total TTC</th>
+                <th>Émission</th>
+                <th>Échéance</th>
+                <th>Statut</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let f of filteredFactures">
+                <td class="num-cell">{{ f.numero }}</td>
+                <td class="objet-cell">{{ f.objet }}</td>
+                <td class="amount-cell">{{ f.montantHT | number:'1.3-3' }} DT</td>
+                <td class="amount-cell">{{ f.tva }}%</td>
+                <td class="amount-cell total-cell">{{ f.montantTTC | number:'1.3-3' }} DT</td>
+                <td>{{ formatDate(f.dateEmission) }}</td>
+                <td>{{ formatDate(f.dateEcheance) }}</td>
+                <td>
+                  <span class="statut-badge" [ngClass]="getStatutClass(f.statut)">
+                    {{ getStatutLabel(f.statut) }}
+                  </span>
+                </td>
+                <td class="actions-col">
+                  <button class="btn-action" (click)="openStatutModal(f)" title="Changer le statut">
+                    <i class="fas fa-edit"></i>
+                  </button>
+                  <button class="btn-action btn-action-email"
+                    (click)="envoyerFactureEmail(f)"
+                    [disabled]="sendingEmailId === f.id"
+                    title="Envoyer par email au client">
+                    <i class="fas" [class.fa-envelope]="sendingEmailId !== f.id" [class.fa-spinner]="sendingEmailId === f.id" [class.fa-spin]="sendingEmailId === f.id"></i>
+                  </button>
+                  <button class="btn-action btn-action-pdf" (click)="telechargerPdf(f)" title="Télécharger PDF">
+                    <i class="fas fa-file-pdf"></i>
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div class="empty-factures" *ngIf="filteredFactures.length === 0 && !loadingFactures">
+            <i class="fas fa-file-invoice"></i>
+            <p>Aucune facture trouvée</p>
+            <button class="btn-create-empty" (click)="openCreateModal()">
+              <i class="fas fa-plus"></i> Créer la première facture
+            </button>
+          </div>
+        </div>
+
+      </ng-container>
+    </div>
+  </div>
+
+  <!-- Modal Créer Facture -->
+  <div class="modal-overlay" *ngIf="showCreateModal" (click)="closeCreateModal()">
+    <div class="modal" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h3><i class="fas fa-file-invoice-dollar"></i> Nouvelle Facture</h3>
+        <span class="modal-client-name">{{ getClientNom(selectedClient!) }}</span>
+        <button class="modal-close" (click)="closeCreateModal()">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-row">
+          <div class="form-group">
+            <label>Objet / Libellé <span class="required">*</span></label>
+            <input type="text" class="form-control" [(ngModel)]="newFacture.objet"
+                   placeholder="Ex: Mission Audit SI – Phase 2">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Montant HT (DT) <span class="required">*</span></label>
+            <input type="number" class="form-control" [(ngModel)]="newFacture.montantHT"
+                   min="0" step="0.001" placeholder="0.000">
+          </div>
+          <div class="form-group">
+            <label>TVA (%)</label>
+            <select class="form-control" [(ngModel)]="newFacture.tva">
+              <option [value]="0">0%</option>
+              <option [value]="7">7%</option>
+              <option [value]="13">13%</option>
+              <option [value]="19">19%</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Total TTC (calculé)</label>
+            <div class="ttc-preview">{{ montantTTCPreview | number:'1.3-3' }} DT</div>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Date d'émission</label>
+            <input type="date" class="form-control" [(ngModel)]="newFacture.dateEmission">
+          </div>
+          <div class="form-group">
+            <label>Date d'échéance</label>
+            <input type="date" class="form-control" [(ngModel)]="newFacture.dateEcheance">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Émise par</label>
+            <input type="text" class="form-control" [(ngModel)]="newFacture.emiseParUtilisateur"
+                   placeholder="Nom du consultant">
+          </div>
+          <div class="form-group">
+            <label>Contrat lié <span style="color:#9ca3af;font-weight:400">(optionnel)</span></label>
+            <select class="form-control" [(ngModel)]="newFacture.contratId">
+              <option [ngValue]="null">Aucun</option>
+              <option *ngFor="let c of contratsClient" [ngValue]="c.id">{{ c.titre }}</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-cancel" (click)="closeCreateModal()">Annuler</button>
+        <button class="btn btn-primary" (click)="creerFacture()"
+                [disabled]="savingFacture || !newFacture.objet || !newFacture.montantHT">
+          <i class="fas" [class.fa-check]="!savingFacture" [class.fa-spinner]="savingFacture" [class.fa-spin]="savingFacture"></i>
+          {{ savingFacture ? 'Création...' : 'Créer la facture' }}
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Statut -->
+  <div class="modal-overlay" *ngIf="showStatutModal" (click)="closeStatutModal()">
+    <div class="modal modal-small" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h3><i class="fas fa-edit"></i> Changer le statut</h3>
+        <button class="modal-close" (click)="closeStatutModal()">✕</button>
+      </div>
+      <div class="modal-body">
+        <p class="modal-facture-num">{{ selectedFacture?.numero }} — {{ selectedFacture?.objet }}</p>
+        <div class="form-group">
+          <label>Nouveau statut</label>
+          <select class="form-control" [(ngModel)]="newStatut">
+            <option value="EN_ATTENTE">En attente</option>
+            <option value="PAYEE">Payée</option>
+            <option value="EN_RETARD">En retard</option>
+            <option value="ANNULEE">Annulée</option>
+          </select>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-cancel" (click)="closeStatutModal()">Annuler</button>
+        <button class="btn btn-primary" (click)="changerStatut()">
+          <i class="fas fa-check"></i> Confirmer
+        </button>
+      </div>
+    </div>
+  </div>
+
+</div>

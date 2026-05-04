@@ -1,0 +1,57 @@
+<div class="page-container">
+  <div class="page-header">
+    <div class="header-content">
+      <h2><i class="fas fa-history"></i> Historique</h2>
+      <p class="page-subtitle">Retrouvez toutes vos interactions passées avec SYNEXA</p>
+    </div>
+    <button class="btn-primary" (click)="exportPdf()"><i class="fas fa-file-pdf"></i> Exporter PDF</button>
+  </div>
+
+  <div class="filters-container">
+    <div class="filter-group">
+      <label>Période</label>
+      <div class="filter-buttons">
+        <button [class.active]="filtrePeriode === 'TOUT'" (click)="setFiltrePeriode('TOUT')">Tout</button>
+        <button [class.active]="filtrePeriode === '3M'" (click)="setFiltrePeriode('3M')">3 Derniers mois</button>
+        <button [class.active]="filtrePeriode === '30J'" (click)="setFiltrePeriode('30J')">30 Jours</button>
+        <button [class.active]="filtrePeriode === '7J'" (click)="setFiltrePeriode('7J')">7 Jours</button>
+      </div>
+    </div>
+    <div class="filter-group">
+      <label>Type</label>
+      <div class="filter-buttons">
+        <button [class.active]="filtreType === 'TOUS'" (click)="setFiltreType('TOUS')">Tous</button>
+        <button [class.active]="filtreType === 'MESSAGE'" (click)="setFiltreType('MESSAGE')">Messages</button>
+        <button [class.active]="filtreType === 'RDV'" (click)="setFiltreType('RDV')">Rendez-vous</button>
+        <button [class.active]="filtreType === 'MISSION'" (click)="setFiltreType('MISSION')">Missions</button>
+        <button [class.active]="filtreType === 'CONTRAT'" (click)="setFiltreType('CONTRAT')">Contrats</button>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="loading" class="loading-state"><div class="spinner"></div></div>
+
+  <div class="timeline-container" *ngIf="!loading && filteredHistorique.length > 0">
+    <div class="timeline">
+      <div class="timeline-item" *ngFor="let item of filteredHistorique">
+        <div class="timeline-dot" [ngClass]="item.type?.toLowerCase()">
+          <i [class]="item.icone"></i>
+        </div>
+        <div class="timeline-content">
+          <div class="timeline-header">
+            <h4>{{ item.titre }}</h4>
+            <span class="timeline-date">{{ item.date | date:'dd/MM/yyyy à HH:mm' }}</span>
+          </div>
+          <p class="timeline-desc">{{ item.description }}</p>
+          <span class="timeline-status" [ngClass]="item.statut?.toLowerCase()">{{ item.statut }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="empty-state" *ngIf="!loading && filteredHistorique.length === 0">
+    <i class="fas fa-search"></i>
+    <h3>Aucun historique trouvé</h3>
+    <p>Essayez de modifier vos filtres.</p>
+  </div>
+</div>

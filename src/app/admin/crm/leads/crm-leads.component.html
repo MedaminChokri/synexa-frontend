@@ -1,0 +1,90 @@
+<div class="crm-leads-page">
+  <!-- En-tête -->
+  <div class="page-header">
+    <div class="header-left">
+      <h2 class="page-title">
+        <i class="fas fa-users"></i>
+        Gestion des Leads
+      </h2>
+      <p class="page-subtitle">{{ leads.length }} lead(s) au total</p>
+    </div>
+  </div>
+
+  <!-- Filtres -->
+  <div class="filters-bar">
+    <div class="filter-group">
+      <label>Étape</label>
+      <select [(ngModel)]="filtreEtape" (change)="onFilterChange()">
+        <option value="">Toutes</option>
+        <option *ngFor="let e of etapes" [value]="e">{{ etapeLabels[e] }}</option>
+      </select>
+    </div>
+    <div class="filter-group">
+      <label>Source</label>
+      <select [(ngModel)]="filtreSource" (change)="onFilterChange()">
+        <option value="">Toutes</option>
+        <option *ngFor="let s of sources" [value]="s">{{ sourceLabels[s] }}</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Tableau -->
+  <div class="table-container" *ngIf="!loading">
+    <table class="crm-table" *ngIf="leads.length > 0">
+      <thead>
+        <tr>
+          <th>Nom</th>
+          <th>Entreprise</th>
+          <th>Étape</th>
+          <th>Source</th>
+          <th>Score</th>
+          <th>Date</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let lead of leads" (click)="goToDetail(lead.id!)" class="lead-row">
+          <td>
+            <div class="lead-name">
+              <span class="lead-avatar">{{ (lead.prenom || lead.nom || '?').charAt(0).toUpperCase() }}</span>
+              <div>
+                <span class="name-text">{{ lead.prenom }} {{ lead.nom }}</span>
+                <span class="email-text">{{ lead.email }}</span>
+              </div>
+            </div>
+          </td>
+          <td>{{ lead.entreprise || '—' }}</td>
+          <td>
+            <span class="etape-badge" [style.background]="etapeColors[lead.etape] + '1a'" [style.color]="etapeColors[lead.etape]" [style.border-color]="etapeColors[lead.etape] + '33'">
+              {{ etapeLabels[lead.etape] }}
+            </span>
+          </td>
+          <td><span class="source-tag">{{ sourceLabels[lead.source] }}</span></td>
+          <td>
+            <div class="stars">
+              <i class="fas fa-star star-filled" *ngFor="let s of getStars(lead.score)"></i>
+              <i class="fas fa-star star-empty" *ngFor="let s of getEmptyStars(lead.score)"></i>
+            </div>
+          </td>
+          <td class="date-cell">{{ lead.dateCreation | date:'dd/MM/yyyy' }}</td>
+          <td>
+            <button class="btn-icon btn-delete" (click)="deleteLead(lead.id!, $event)" title="Supprimer">
+              <i class="fas fa-trash-alt"></i>
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="empty-state" *ngIf="leads.length === 0">
+      <i class="fas fa-inbox"></i>
+      <span>Aucun lead trouvé</span>
+    </div>
+  </div>
+
+  <!-- Loading -->
+  <div class="loading-container" *ngIf="loading">
+    <div class="loading-spinner"></div>
+    <span>Chargement...</span>
+  </div>
+</div>

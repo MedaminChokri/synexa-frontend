@@ -1,0 +1,71 @@
+{
+  "navbar": {
+    "home": "Accueil",
+    "services": "Services",
+    "insights": "Insights",
+    "agency": "L'Agence",
+    "contact": "Contact",
+    "espaceClient": "Espace Client",
+    "contactUs": "Contactez-nous",
+    "careers": "Carrières",
+    "getQuote": "Obtenir un devis gratuit"
+  },
+  "hero": {
+    "subtitle": "Groupe de Conseil Stratégique",
+    "title1": "Transformez votre",
+    "title2": "Vision en Résultats",
+    "description": "SYNEXA Consult accompagne les organisations dans leur transformation stratégique, technologique et opérationnelle.",
+    "cta1": "Découvrir nos services",
+    "cta2": "Nous contacter",
+    "cta": "Discutons-en"
+  },
+  "services": {
+    "title": "Nos Domaines d'Intervention",
+    "subtitle": "Une expertise multisectorielle au service de votre performance",
+    "conseil": "Conseil & Management",
+    "techIA": "Tech & Intelligence Artificielle",
+    "expertise": "Expertise"
+  },
+  "stats": {
+    "title": "SYNEXA en Chiffres"
+  },
+  "equipe": {
+    "title": "Notre Équipe",
+    "subtitle": "Des experts passionnés à votre service"
+  },
+  "temoignages": {
+    "title": "Ils nous font confiance",
+    "subtitle": "Ce que disent nos clients"
+  },
+  "contact": {
+    "title": "Contactez-nous",
+    "subtitle": "Parlons de votre projet",
+    "name": "Prénom & Nom",
+    "email": "Email",
+    "phone": "Téléphone",
+    "company": "Entreprise",
+    "service": "Service",
+    "message": "Message",
+    "send": "Envoyer",
+    "sending": "Envoi en cours..."
+  },
+  "footer": {
+    "description": "SYNEXA Consult est un groupe de conseil stratégique et opérationnel présent en Tunisie, Europe et Afrique.",
+    "links": "Liens rapides",
+    "copyright": "2026 SYNEXA Consult. Tous droits réservés.",
+    "legal": "Mentions légales",
+    "privacy": "Politique de confidentialité"
+  },
+  "admin": {
+    "login": "Connexion Administration",
+    "dashboard": "Tableau de bord",
+    "services": "Services",
+    "temoignages": "Témoignages",
+    "statistiques": "Statistiques",
+    "equipe": "Équipe",
+    "contacts": "Contacts",
+    "rendezvous": "Rendez-vous",
+    "utilisateurs": "Utilisateurs",
+    "logout": "Déconnexion"
+  }
+}

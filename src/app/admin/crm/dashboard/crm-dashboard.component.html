@@ -1,0 +1,201 @@
+<div class="crm-dashboard" *ngIf="!loading">
+  <!-- En-tête -->
+  <div class="page-header">
+    <div>
+      <h2 class="page-title"><i class="fas fa-chart-line"></i> Dashboard CRM</h2>
+      <p class="page-subtitle">Vue d'ensemble de votre activité commerciale</p>
+    </div>
+  </div>
+
+  <!-- ══════════ KPIs ADMIN ══════════ -->
+  <ng-container *ngIf="isAdmin">
+    <div class="section-label">Vue d'ensemble</div>
+    <div class="kpi-grid kpi-grid-3">
+      <div class="kpi-card">
+        <div class="kpi-icon-wrapper purple"><i class="fas fa-users"></i></div>
+        <div class="kpi-info">
+          <span class="kpi-value">{{ totalClients }}</span>
+          <span class="kpi-label">Clients actifs</span>
+        </div>
+      </div>
+
+      <div class="kpi-card kpi-card-warning">
+        <div class="kpi-icon-wrapper yellow"><i class="fas fa-file-invoice-dollar"></i></div>
+        <div class="kpi-info">
+          <span class="kpi-value">{{ facturesEnAttente }}</span>
+          <span class="kpi-label">Factures en attente</span>
+          <span class="kpi-sub">{{ montantEnAttente | number:'1.0-0' }} TND</span>
+        </div>
+      </div>
+
+      <div class="kpi-card kpi-card-danger">
+        <div class="kpi-icon-wrapper red"><i class="fas fa-exclamation-circle"></i></div>
+        <div class="kpi-info">
+          <span class="kpi-value">{{ facturesEnRetard }}</span>
+          <span class="kpi-label">Factures en retard</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-label">Rendez-vous & Contrats</div>
+    <div class="kpi-grid kpi-grid-3">
+      <div class="kpi-card">
+        <div class="kpi-icon-wrapper green"><i class="fas fa-calendar-check"></i></div>
+        <div class="kpi-info">
+          <span class="kpi-value">{{ rdvAujourdhui }}</span>
+          <span class="kpi-label">RDV aujourd'hui</span>
+          <span class="kpi-sub">{{ totalRdvMois }} ce mois</span>
+        </div>
+      </div>
+
+      <div class="kpi-card kpi-card-success">
+        <div class="kpi-icon-wrapper teal"><i class="fas fa-file-signature"></i></div>
+        <div class="kpi-info">
+          <span class="kpi-value">{{ contratsSignes }}</span>
+          <span class="kpi-label">Contrats signés</span>
+        </div>
+      </div>
+
+      <div class="kpi-card">
+        <div class="kpi-icon-wrapper blue"><i class="fas fa-clock"></i></div>
+        <div class="kpi-info">
+          <span class="kpi-value">{{ contratsEnAttente }}</span>
+          <span class="kpi-label">Contrats en attente signature</span>
+        </div>
+      </div>
+    </div>
+  </ng-container>
+
+  <!-- ══════════ KPIs CONSULTANT ══════════ -->
+  <ng-container *ngIf="isConsultant">
+    <div class="section-label">Mes Performances</div>
+    <div class="kpi-grid kpi-grid-4">
+
+      <div class="kpi-card">
+        <div class="kpi-icon-wrapper purple"><i class="fas fa-users"></i></div>
+        <div class="kpi-info">
+          <span class="kpi-value">{{ totalClients }}</span>
+          <span class="kpi-label">Clients actifs</span>
+        </div>
+      </div>
+
+      <div class="kpi-card">
+        <div class="kpi-icon-wrapper green"><i class="fas fa-calendar-check"></i></div>
+        <div class="kpi-info">
+          <span class="kpi-value">{{ rdvAujourdhui }}</span>
+          <span class="kpi-label">Mes RDV aujourd'hui</span>
+          <span class="kpi-sub">{{ totalRdvMois }} ce mois</span>
+        </div>
+      </div>
+
+      <div class="kpi-card kpi-card-success">
+        <div class="kpi-icon-wrapper teal"><i class="fas fa-file-signature"></i></div>
+        <div class="kpi-info">
+          <span class="kpi-value">{{ contratsSignes }}</span>
+          <span class="kpi-label">Contrats signés</span>
+        </div>
+      </div>
+
+      <div class="kpi-card">
+        <div class="kpi-icon-wrapper blue"><i class="fas fa-clock"></i></div>
+        <div class="kpi-info">
+          <span class="kpi-value">{{ contratsEnAttente }}</span>
+          <span class="kpi-label">Contrats en attente</span>
+        </div>
+      </div>
+
+    </div>
+  </ng-container>
+
+  <!-- ══════════ GRAPHIQUES ══════════ -->
+  <div class="charts-grid">
+    <!-- Leads par étape -->
+    <div class="chart-card">
+      <h3 class="chart-title"><i class="fas fa-chart-bar"></i> Leads par étape</h3>
+      <div class="bar-chart">
+        <div class="bar-row" *ngFor="let item of leadsParEtape">
+          <span class="bar-label">{{ item.label }}</span>
+          <div class="bar-track">
+            <div class="bar-fill" [style.width]="getBarWidth(item.value)" [style.background]="item.color">
+              <span class="bar-value" *ngIf="item.value > 0">{{ item.value }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Résumé rapide -->
+    <div class="chart-card">
+      <h3 class="chart-title"><i class="fas fa-tachometer-alt"></i> Résumé</h3>
+      <div class="summary-list">
+        <div class="summary-item">
+          <span class="summary-label"><i class="fas fa-circle" style="color:#3b82f6"></i> Total leads</span>
+          <span class="summary-value">{{ totalLeads }}</span>
+        </div>
+        <div class="summary-item">
+          <span class="summary-label"><i class="fas fa-circle" style="color:#ef4444"></i> Perdus</span>
+          <span class="summary-value">{{ leadsPerdus }}</span>
+        </div>
+        <div class="summary-divider"></div>
+        <div class="summary-item">
+          <span class="summary-label"><i class="fas fa-circle" style="color:#8b5cf6"></i> Clients</span>
+          <span class="summary-value">{{ totalClients }}</span>
+        </div>
+        <div class="summary-item">
+          <span class="summary-label"><i class="fas fa-circle" style="color:#06b6d4"></i> Contrats signés</span>
+          <span class="summary-value">{{ contratsSignes }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════ BAS DE PAGE ══════════ -->
+  <div class="bottom-grid">
+    <!-- RDV aujourd'hui -->
+    <div class="info-card">
+      <h3 class="chart-title"><i class="fas fa-calendar-day"></i> Rendez-vous aujourd'hui</h3>
+      <div class="rdv-list" *ngIf="rdvList.length > 0">
+        <div class="rdv-item" *ngFor="let rdv of rdvList">
+          <div class="rdv-time"><i class="fas fa-clock"></i> {{ rdv.dateHeure | date:'HH:mm' }}</div>
+          <div class="rdv-details">
+            <span class="rdv-title">{{ rdv.titre }}</span>
+            <span class="rdv-type-badge" [class.visio]="rdv.type === 'VISIO'">
+              {{ rdv.type === 'VISIO' ? '📹 Visio' : '📍 Physique' }}
+            </span>
+          </div>
+        </div>
+      </div>
+      <div class="empty-state" *ngIf="rdvList.length === 0">
+        <i class="fas fa-calendar-times"></i>
+        <span>Aucun RDV prévu aujourd'hui</span>
+      </div>
+    </div>
+
+    <!-- Activité récente -->
+    <div class="info-card">
+      <h3 class="chart-title"><i class="fas fa-history"></i> Activité récente</h3>
+      <div class="activity-list" *ngIf="activiteRecente.length > 0">
+        <div class="activity-item" *ngFor="let item of activiteRecente">
+          <div class="activity-icon">
+            <i [class]="item.type === 'APPEL' ? 'fas fa-phone' : item.type === 'EMAIL' ? 'fas fa-envelope' : item.type === 'RDV' ? 'fas fa-calendar-check' : 'fas fa-sticky-note'"></i>
+          </div>
+          <div class="activity-details">
+            <span class="activity-author">{{ item.auteur }}</span>
+            <span class="activity-content">{{ item.contenu | slice:0:60 }}{{ item.contenu?.length > 60 ? '...' : '' }}</span>
+            <span class="activity-date">{{ item.dateCreation | date:'dd/MM/yyyy HH:mm' }}</span>
+          </div>
+        </div>
+      </div>
+      <div class="empty-state" *ngIf="activiteRecente.length === 0">
+        <i class="fas fa-inbox"></i>
+        <span>Aucune activité récente</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Loading -->
+<div class="loading-container" *ngIf="loading">
+  <div class="loading-spinner"></div>
+  <span class="loading-text">Chargement du Dashboard CRM...</span>
+</div>

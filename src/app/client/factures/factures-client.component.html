@@ -1,0 +1,100 @@
+<div class="factures-page">
+
+  <div class="factures-header">
+    <div>
+      <h2><i class="fas fa-file-invoice-dollar"></i> Mes Factures</h2>
+      <p>Téléchargez vos factures et suivez l'état de vos paiements</p>
+    </div>
+  </div>
+
+  <!-- Résumé financier -->
+  <div class="factures-summary" *ngIf="!loading && factures.length > 0">
+    <div class="summary-card">
+      <div class="summary-icon" style="background:rgba(196,149,42,.15); color:#C4952A">
+        <i class="fas fa-receipt"></i>
+      </div>
+      <div class="summary-info">
+        <span class="summary-value">{{ getTotalTTC() | number:'1.0-0' }} DT</span>
+        <span class="summary-label">Total facturé</span>
+      </div>
+    </div>
+    <div class="summary-card">
+      <div class="summary-icon" style="background:rgba(16,185,129,.12); color:#10b981">
+        <i class="fas fa-check-circle"></i>
+      </div>
+      <div class="summary-info">
+        <span class="summary-value">{{ getTotalPayees() | number:'1.0-0' }} DT</span>
+        <span class="summary-label">Payées</span>
+      </div>
+    </div>
+    <div class="summary-card">
+      <div class="summary-icon" style="background:rgba(245,158,11,.12); color:#f59e0b">
+        <i class="fas fa-clock"></i>
+      </div>
+      <div class="summary-info">
+        <span class="summary-value">{{ getTotalEnAttente() | number:'1.0-0' }} DT</span>
+        <span class="summary-label">En attente</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading -->
+  <div *ngIf="loading" class="loading"><div class="spinner"></div></div>
+
+  <!-- Table des factures -->
+  <div class="factures-table-wrap" *ngIf="!loading && factures.length > 0">
+    <table class="factures-table">
+      <thead>
+        <tr>
+          <th>N° Facture</th>
+          <th>Objet</th>
+          <th>Montant HT</th>
+          <th>TVA</th>
+          <th>Total TTC</th>
+          <th>Date émission</th>
+          <th>Échéance</th>
+          <th>Statut</th>
+          <th>PDF</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let f of factures" [class]="f.statut === 'EN_RETARD' ? 'row-retard' : ''">
+          <td class="numero-cell">
+            <i class="fas fa-file-invoice"></i> {{ f.numero }}
+          </td>
+          <td>{{ f.objet }}</td>
+          <td>{{ f.montantHT | number:'1.0-2' }} DT</td>
+          <td>{{ f.tva }}%</td>
+          <td class="montant-ttc">{{ f.montantTTC | number:'1.0-2' }} DT</td>
+          <td>{{ f.dateEmission | date:'dd/MM/yyyy' }}</td>
+          <td [class]="f.statut === 'EN_RETARD' ? 'date-retard' : ''">
+            {{ f.dateEcheance | date:'dd/MM/yyyy' }}
+            <span class="retard-badge" *ngIf="f.statut === 'EN_RETARD'">
+              <i class="fas fa-exclamation-triangle"></i> En retard
+            </span>
+          </td>
+          <td>
+            <span class="statut-chip" [class]="getStatutClass(f.statut)">
+              {{ getStatutLabel(f.statut) }}
+            </span>
+          </td>
+          <td>
+            <button type="button" class="btn-pdf"
+                    (click)="telechargerPdf(f)"
+                    title="Télécharger le PDF">
+              <i class="fas fa-download"></i>
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Empty state -->
+  <div class="empty-state" *ngIf="!loading && factures.length === 0">
+    <i class="fas fa-file-invoice"></i>
+    <p>Aucune facture pour le moment</p>
+    <span>Vos factures apparaîtront ici une fois générées par votre consultant</span>
+  </div>
+
+</div>

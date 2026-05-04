@@ -1,0 +1,87 @@
+<div class="auth-shell">
+  <div class="auth-grid">
+    <aside class="auth-left">
+      <a class="brand" routerLink="/">
+        <span class="brand-mark"></span>
+        <span class="brand-name">SYNEXA</span>
+      </a>
+      <p class="eyebrow">All-in-one enterprise workspace</p>
+      <h1>Sign in and run your business from one intelligent platform.</h1>
+      <p class="lead">
+        Access CRM, ERP operations, billing, client collaboration, and AI assistance in one
+        secure environment.
+      </p>
+      <div class="benefits">
+        <article><span></span>Unified CRM, ERP, and client portal</article>
+        <article><span></span>Secure access with enterprise-ready controls</article>
+        <article><span></span>Real-time analytics and team visibility</article>
+      </div>
+      <a routerLink="/" class="back-link">Back to website</a>
+    </aside>
+
+    <section class="auth-right">
+      <div class="form-card">
+        <p class="form-kicker">Welcome back</p>
+        <h2>Sign in to SYNEXA</h2>
+        <p class="form-sub">Use your account credentials to continue.</p>
+
+        <div class="alert-success" *ngIf="success">
+          <i class="fas fa-check-circle"></i> {{ success }}
+        </div>
+        <div class="alert-error" *ngIf="error">
+          {{ error }}
+          <a *ngIf="error.includes('vérifier')" [routerLink]="['/verify-email']" [queryParams]="{email: form.get('email')?.value}" class="verify-link">
+            &nbsp;Vérifier maintenant →
+          </a>
+        </div>
+
+        <form [formGroup]="form" (ngSubmit)="onSubmit()" autocomplete="off">
+          <div class="field">
+            <label for="login-email">Email address</label>
+            <input
+              id="login-email"
+              type="email"
+              formControlName="email"
+              placeholder="name@company.com"
+              autocomplete="username"
+              [class.invalid]="form.get('email')?.invalid && form.get('email')?.touched"
+            />
+            <span class="field-err" *ngIf="form.get('email')?.invalid && form.get('email')?.touched">
+              Please enter a valid email address.
+            </span>
+          </div>
+
+          <div class="field">
+            <label for="login-pwd">Password</label>
+            <div class="pwd-wrap">
+              <input
+                id="login-pwd"
+                [type]="showPassword ? 'text' : 'password'"
+                formControlName="motDePasse"
+                placeholder="Enter your password"
+                autocomplete="current-password"
+                [class.invalid]="form.get('motDePasse')?.invalid && form.get('motDePasse')?.touched"
+              />
+              <button type="button" class="pwd-toggle" (click)="togglePassword()">
+                {{ showPassword ? 'Hide' : 'Show' }}
+              </button>
+            </div>
+            <span class="field-err" *ngIf="form.get('motDePasse')?.invalid && form.get('motDePasse')?.touched">
+              Password is required.
+            </span>
+          </div>
+
+          <button type="submit" class="btn-submit" [disabled]="loading">
+            <span *ngIf="!loading">Sign in</span>
+            <span *ngIf="loading" class="dots"><span></span><span></span><span></span></span>
+          </button>
+        </form>
+
+        <div class="form-footer">
+          <span>New to SYNEXA?</span>
+          <a routerLink="/signup">Create account</a>
+        </div>
+      </div>
+    </section>
+  </div>
+</div>

@@ -1,0 +1,78 @@
+<div class="assistant-page">
+
+  <!-- Header -->
+  <div class="assistant-header">
+    <div class="assistant-header-left">
+      <div class="bot-avatar-lg">
+        <i class="fas fa-robot"></i>
+        <span class="bot-online-dot"></span>
+      </div>
+      <div>
+        <h2>Assistant IA SYNEXA</h2>
+        <span class="bot-status">En ligne · Répond instantanément</span>
+      </div>
+    </div>
+    <button class="btn-clear" (click)="clearChat()" title="Nouvelle conversation">
+      <i class="fas fa-redo-alt"></i> Nouvelle conversation
+    </button>
+  </div>
+
+  <!-- Chat Window -->
+  <div class="chat-window">
+    <div class="chat-messages-area" #chatContainer>
+
+      <div class="chat-message" *ngFor="let msg of chatMessages"
+           [class.user-msg]="msg.auteur === 'utilisateur'"
+           [class.bot-msg]="msg.auteur === 'bot'">
+        <div class="msg-avatar" *ngIf="msg.auteur === 'bot'">
+          <i class="fas fa-robot"></i>
+        </div>
+        <div class="msg-bubble">
+          <p>{{ msg.texte }}</p>
+          <span class="msg-time">{{ msg.horodatage | date:'HH:mm' }}</span>
+        </div>
+        <div class="msg-avatar user-avatar" *ngIf="msg.auteur === 'utilisateur'">
+          <i class="fas fa-user"></i>
+        </div>
+      </div>
+
+      <!-- Typing indicator -->
+      <div class="chat-message bot-msg" *ngIf="botTyping">
+        <div class="msg-avatar"><i class="fas fa-robot"></i></div>
+        <div class="msg-bubble typing-bubble">
+          <div class="typing-dots">
+            <span></span><span></span><span></span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Suggestions -->
+    <div class="suggestions-bar" *ngIf="chatMessages.length <= 1">
+      <p class="suggestions-label">Questions fréquentes :</p>
+      <div class="suggestions-grid">
+        <button class="suggestion-chip" *ngFor="let s of suggestions" (click)="sendSuggestion(s.text)">
+          <i [class]="s.icon"></i>
+          <span>{{ s.text }}</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Input -->
+    <form class="chat-input-bar" (submit)="sendMessage($event)">
+      <input
+        type="text"
+        [(ngModel)]="chatInput"
+        [ngModelOptions]="{standalone: true}"
+        placeholder="Posez votre question à l'assistant..."
+        [disabled]="botTyping"
+        autocomplete="off"
+      />
+      <button type="submit" class="btn-send" [disabled]="!chatInput.trim() || botTyping">
+        <i class="fas fa-paper-plane"></i>
+      </button>
+    </form>
+  </div>
+
+</div>

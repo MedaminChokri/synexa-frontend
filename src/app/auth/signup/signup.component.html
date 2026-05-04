@@ -1,0 +1,152 @@
+<div class="auth-shell">
+  <div class="auth-grid">
+    <aside class="auth-left">
+      <a class="brand" routerLink="/">
+        <span class="brand-mark"></span>
+        <span class="brand-name">SYNEXA</span>
+      </a>
+      <p class="eyebrow">Enterprise onboarding</p>
+      <h1>Create your workspace and centralize your operations.</h1>
+      <p class="lead">
+        Start with a secure account to manage CRM, projects, invoicing, and client communication
+        through one scalable platform.
+      </p>
+      <div class="benefits">
+        <article><span></span>Fast setup for B2B teams</article>
+        <article><span></span>Secure and role-based access</article>
+        <article><span></span>Integrated AI and automation tools</article>
+      </div>
+      <a routerLink="/" class="back-link">Back to website</a>
+    </aside>
+
+    <section class="auth-right">
+      <div class="form-card">
+        <p class="form-kicker">Get started</p>
+        <h2>Create your account</h2>
+        <p class="form-sub">Set up your SYNEXA workspace in under 2 minutes.</p>
+
+        <div class="success-alert" *ngIf="successMessage">{{ successMessage }}</div>
+        <div class="error-alert" *ngIf="errorMessage">{{ errorMessage }}</div>
+
+        <form [formGroup]="signupForm" (ngSubmit)="onSubmit()">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="prenom">First name *</label>
+              <input
+                id="prenom"
+                type="text"
+                formControlName="prenom"
+                placeholder="John"
+                [class.input-error]="signupForm.get('prenom')?.invalid && signupForm.get('prenom')?.touched"
+              />
+              <span class="field-error" *ngIf="signupForm.get('prenom')?.invalid && signupForm.get('prenom')?.touched">
+                Required field
+              </span>
+            </div>
+
+            <div class="form-group">
+              <label for="nom">Last name *</label>
+              <input
+                id="nom"
+                type="text"
+                formControlName="nom"
+                placeholder="Doe"
+                [class.input-error]="signupForm.get('nom')?.invalid && signupForm.get('nom')?.touched"
+              />
+              <span class="field-error" *ngIf="signupForm.get('nom')?.invalid && signupForm.get('nom')?.touched">
+                Required field
+              </span>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="email">Email *</label>
+            <input
+              id="email"
+              type="email"
+              formControlName="email"
+              placeholder="name@company.com"
+              [class.input-error]="signupForm.get('email')?.invalid && signupForm.get('email')?.touched"
+            />
+            <span class="field-error" *ngIf="signupForm.get('email')?.invalid && signupForm.get('email')?.touched">
+              Invalid email format
+            </span>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="entreprise">Company <span class="optional">(optional)</span></label>
+              <input id="entreprise" type="text" formControlName="entreprise" placeholder="Your company" />
+            </div>
+
+            <div class="form-group">
+              <label for="telephone">Phone <span class="optional">(optional)</span></label>
+              <input id="telephone" type="tel" formControlName="telephone" placeholder="+216 XX XXX XXX" />
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="password">Password *</label>
+              <div class="pwd-wrap">
+                <input
+                  id="password"
+                  [type]="showPassword ? 'text' : 'password'"
+                  formControlName="motDePasse"
+                  placeholder="At least 6 characters"
+                  [class.input-error]="signupForm.get('motDePasse')?.invalid && signupForm.get('motDePasse')?.touched"
+                />
+                <button type="button" class="pwd-toggle" (click)="togglePassword()">
+                  {{ showPassword ? 'Hide' : 'Show' }}
+                </button>
+              </div>
+              <div class="pwd-strength" *ngIf="signupForm.get('motDePasse')?.value">
+                <div class="pwd-bar">
+                  <div
+                    class="pwd-fill"
+                    [style.width.%]="(passwordStrength.score / 5) * 100"
+                    [style.background]="passwordStrength.color"
+                  ></div>
+                </div>
+                <span class="pwd-label" [style.color]="passwordStrength.color">{{ passwordStrength.label }}</span>
+              </div>
+              <span class="field-error" *ngIf="signupForm.get('motDePasse')?.invalid && signupForm.get('motDePasse')?.touched">
+                Minimum 6 characters required
+              </span>
+            </div>
+
+            <div class="form-group">
+              <label for="confirm-password">Confirm password *</label>
+              <div class="pwd-wrap">
+                <input
+                  id="confirm-password"
+                  [type]="showConfirmPassword ? 'text' : 'password'"
+                  formControlName="confirmMotDePasse"
+                  placeholder="Repeat your password"
+                  [class.input-error]="signupForm.errors?.['passwordMismatch'] && signupForm.get('confirmMotDePasse')?.touched"
+                />
+                <button type="button" class="pwd-toggle" (click)="toggleConfirmPassword()">
+                  {{ showConfirmPassword ? 'Hide' : 'Show' }}
+                </button>
+              </div>
+              <span class="field-error" *ngIf="signupForm.errors?.['passwordMismatch'] && signupForm.get('confirmMotDePasse')?.touched">
+                Passwords do not match
+              </span>
+            </div>
+          </div>
+
+          <button type="submit" class="btn-submit" [disabled]="loading || signupForm.invalid">
+            <span *ngIf="loading" class="spinner"></span>
+            <span *ngIf="!loading">Create account</span>
+            <span *ngIf="loading">Creating...</span>
+          </button>
+        </form>
+
+        <div class="auth-links">
+          <span>Already have an account?</span>
+          <a routerLink="/login">Sign in</a>
+        </div>
+      </div>
+    </section>
+  </div>
+</div>

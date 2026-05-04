@@ -1,0 +1,262 @@
+<div class="lead-detail-page" *ngIf="!loading && lead">
+  <!-- Retour + Titre -->
+  <div class="page-header">
+    <button class="btn-back" (click)="goBack()">
+      <i class="fas fa-arrow-left"></i>
+      Retour aux leads
+    </button>
+    <div class="header-actions">
+      <button class="btn-edit" (click)="showEditForm = !showEditForm">
+        <i class="fas fa-edit"></i>
+        {{ showEditForm ? 'Annuler' : 'Modifier' }}
+      </button>
+    </div>
+  </div>
+
+  <div class="detail-grid">
+    <!-- Colonne gauche : infos du lead -->
+    <div class="info-panel">
+      <!-- Header lead -->
+      <div class="lead-header">
+        <div class="lead-avatar-large">{{ (lead.prenom || lead.nom).charAt(0).toUpperCase() }}</div>
+        <div class="lead-header-info">
+          <h2 class="lead-name">{{ lead.prenom }} {{ lead.nom }}</h2>
+          <span class="lead-entreprise">{{ lead.entreprise || 'Pas d\'entreprise' }}</span>
+          <div class="lead-badges">
+            <span class="etape-badge" [style.background]="etapeColors[lead.etape] + '1a'" [style.color]="etapeColors[lead.etape]">
+              {{ etapeLabels[lead.etape] }}
+            </span>
+            <span class="source-badge">{{ sourceLabels[lead.source] }}</span>
+          </div>
+          <!-- Tags du lead -->
+          <div class="tags-section" *ngIf="parsedTags.length > 0">
+            <span class="tag-badge"
+                  *ngFor="let tag of parsedTags; let i = index"
+                  [style.background]="getTagColor(i) + '20'"
+                  [style.color]="getTagColor(i)"
+                  [style.border]="'1px solid ' + getTagColor(i)">
+              {{ tag }}
+            </span>
+          </div>
+        </div>
+        <div class="lead-score">
+          <div class="stars">
+            <i class="fas fa-star star-filled" *ngFor="let s of getStars(lead.score)"></i>
+            <i class="fas fa-star star-empty" *ngFor="let s of getEmptyStars(lead.score)"></i>
+          </div>
+          <span class="score-label">Score</span>
+        </div>
+      </div>
+
+      <!-- Formulaire d'édition -->
+      <div class="edit-section" *ngIf="showEditForm">
+        <h3 class="section-title"><i class="fas fa-edit"></i> Modifier le lead</h3>
+        <form [formGroup]="editForm" (ngSubmit)="saveEdit()">
+          <div class="form-grid">
+            <div class="form-group">
+              <label>Prénom</label>
+              <input type="text" formControlName="prenom">
+            </div>
+            <div class="form-group">
+              <label>Nom *</label>
+              <input type="text" formControlName="nom">
+            </div>
+            <div class="form-group">
+              <label>Email</label>
+              <input type="email" formControlName="email">
+            </div>
+            <div class="form-group">
+              <label>Téléphone</label>
+              <input type="text" formControlName="telephone">
+            </div>
+            <div class="form-group">
+              <label>Entreprise</label>
+              <input type="text" formControlName="entreprise">
+            </div>
+            <div class="form-group">
+              <label>Secteur</label>
+              <select formControlName="secteur">
+                <option *ngFor="let s of secteurs" [value]="s">{{ secteurLabels[s] }}</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Pays</label>
+              <input type="text" formControlName="pays">
+            </div>
+            <div class="form-group">
+              <label>Service souhaité</label>
+              <input type="text" formControlName="serviceSouhaite">
+            </div>
+            <div class="form-group">
+              <label>Consultant</label>
+              <input type="text" formControlName="consultantAssigne">
+            </div>
+            <div class="form-group">
+              <label>Score (1-5)</label>
+              <input type="number" formControlName="score" min="1" max="5">
+            </div>
+            <div class="form-group full-width">
+              <label>Motif de perte</label>
+              <textarea formControlName="motifPerte" rows="2"></textarea>
+            </div>
+          </div>
+          <div class="edit-actions">
+            <button type="submit" class="btn-primary" [disabled]="editForm.invalid || submittingEdit">
+              <i class="fas fa-save"></i> Sauvegarder
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Infos détaillées (quand pas en édition) -->
+      <div class="info-details" *ngIf="!showEditForm">
+        <div class="detail-row">
+          <span class="detail-label"><i class="fas fa-envelope"></i> Email</span>
+          <span class="detail-value">{{ lead.email || '—' }}</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label"><i class="fas fa-phone"></i> Téléphone</span>
+          <span class="detail-value">{{ lead.telephone || '—' }}</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label"><i class="fas fa-building"></i> Entreprise</span>
+          <span class="detail-value">{{ lead.entreprise || '—' }}</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label"><i class="fas fa-industry"></i> Secteur</span>
+          <span class="detail-value">{{ secteurLabels[lead.secteur] }}</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label"><i class="fas fa-globe"></i> Pays</span>
+          <span class="detail-value">{{ lead.pays || '—' }}</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label"><i class="fas fa-cog"></i> Service souhaité</span>
+          <span class="detail-value">{{ lead.serviceSouhaite || '—' }}</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label"><i class="fas fa-user-tie"></i> Consultant</span>
+          <span class="detail-value">{{ lead.consultantAssigne || '—' }}</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label"><i class="fas fa-calendar"></i> Créé le</span>
+          <span class="detail-value">{{ lead.dateCreation | date:'dd/MM/yyyy HH:mm' }}</span>
+        </div>
+        <div class="detail-row" *ngIf="lead.motifPerte">
+          <span class="detail-label"><i class="fas fa-times-circle"></i> Motif perte</span>
+          <span class="detail-value">{{ lead.motifPerte }}</span>
+        </div>
+      </div>
+
+      <!-- Changer l'étape -->
+      <div class="etape-section">
+        <h3 class="section-title"><i class="fas fa-exchange-alt"></i> Changer l'étape</h3>
+        <div class="etape-buttons">
+          <button *ngFor="let e of etapes"
+            class="etape-btn"
+            [class.active]="lead.etape === e"
+            [style.border-color]="etapeColors[e]"
+            [style.color]="lead.etape === e ? '#fff' : etapeColors[e]"
+            [style.background]="lead.etape === e ? etapeColors[e] : 'transparent'"
+            (click)="changeEtape(e)">
+            {{ etapeLabels[e] }}
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Colonne droite : historique + notes -->
+    <div class="notes-panel">
+
+      <!-- Timeline des interactions -->
+      <div class="timeline-section">
+        <div class="section-toggle" (click)="showTimeline = !showTimeline">
+          <h3><i class="fas fa-history"></i> Historique des interactions</h3>
+          <i class="fas" [class.fa-chevron-up]="showTimeline" [class.fa-chevron-down]="!showTimeline"></i>
+        </div>
+
+        <div class="timeline-container" *ngIf="showTimeline">
+          <div *ngIf="timeline.length === 0" class="timeline-empty">
+            <i class="fas fa-stream"></i>
+            <p>Aucune interaction enregistrée</p>
+          </div>
+
+          <div class="timeline-item" *ngFor="let item of timeline">
+            <div class="timeline-icon" [style.background]="getTimelineIconBg(item.type)">
+              <i [class]="item.icone || 'fas fa-circle'"></i>
+            </div>
+            <div class="timeline-content">
+              <div class="timeline-header">
+                <span class="timeline-title">{{ item.titre }}</span>
+                <span class="timeline-date">{{ item.date | date:'dd/MM/yyyy HH:mm' }}</span>
+              </div>
+              <p class="timeline-text" *ngIf="item.contenu">{{ item.contenu }}</p>
+              <span class="timeline-author" *ngIf="item.auteur">par {{ item.auteur }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Notes -->
+      <div class="notes-header">
+        <h3 class="section-title"><i class="fas fa-stream"></i> Notes</h3>
+        <button class="btn-add-note" (click)="showNoteForm = !showNoteForm">
+          <i class="fas fa-plus"></i>
+          {{ showNoteForm ? 'Annuler' : 'Ajouter une note' }}
+        </button>
+      </div>
+
+      <!-- Formulaire note -->
+      <div class="note-form-section" *ngIf="showNoteForm">
+        <form [formGroup]="noteForm" (ngSubmit)="submitNote()">
+          <div class="form-group">
+            <label>Auteur *</label>
+            <input type="text" formControlName="auteur" placeholder="Votre nom">
+          </div>
+          <div class="form-group">
+            <label>Type</label>
+            <select formControlName="type">
+              <option *ngFor="let t of noteTypes" [value]="t">{{ getNoteLabel(t) }}</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Contenu *</label>
+            <textarea formControlName="contenu" rows="3" placeholder="Détails de l'interaction..."></textarea>
+          </div>
+          <button type="submit" class="btn-primary" [disabled]="noteForm.invalid || submittingNote">
+            <i class="fas fa-paper-plane"></i> Ajouter
+          </button>
+        </form>
+      </div>
+
+      <!-- Timeline notes -->
+      <div class="timeline" *ngIf="notes.length > 0">
+        <div class="timeline-item" *ngFor="let note of notes">
+          <div class="timeline-dot" [style.background]="etapeColors['CONTACTE']">
+            <i [class]="getNoteIcon(note.type)"></i>
+          </div>
+          <div class="timeline-content">
+            <div class="timeline-header">
+              <span class="timeline-author">{{ note.auteur }}</span>
+              <span class="timeline-type-badge">{{ getNoteLabel(note.type) }}</span>
+              <span class="timeline-date">{{ note.dateCreation | date:'dd/MM/yyyy HH:mm' }}</span>
+            </div>
+            <p class="timeline-text">{{ note.contenu }}</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="empty-state" *ngIf="notes.length === 0 && !showNoteForm">
+        <i class="fas fa-comment-slash"></i>
+        <span>Aucune note pour ce lead</span>
+      </div>
+
+    </div><!-- /notes-panel -->
+  </div><!-- /detail-grid -->
+</div><!-- /lead-detail-page -->
+
+<!-- Loading -->
+<div class="loading-container" *ngIf="loading">
+  <div class="loading-spinner"></div>
+  <span>Chargement du lead...</span>
+</div>

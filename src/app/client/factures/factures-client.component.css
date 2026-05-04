@@ -1,0 +1,68 @@
+.factures-page { padding: 28px; color: #e2e8f0; }
+
+.factures-header { margin-bottom: 24px; }
+.factures-header h2 { font-size:1.5rem; font-weight:700; margin:0 0 4px; color:#e2e8f0; }
+.factures-header h2 i { color:#C4952A; margin-right:8px; }
+.factures-header p { color:rgba(226,232,240,.5); font-size:.875rem; margin:0; }
+
+/* Summary cards */
+.factures-summary { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-bottom:28px; }
+.summary-card {
+  background:rgba(255,255,255,.03); border:1px solid rgba(196,149,42,.08);
+  border-radius:12px; padding:18px; display:flex; align-items:center; gap:14px;
+}
+.summary-icon { width:46px; height:46px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-size:1.2rem; flex-shrink:0; }
+.summary-value { font-size:1.3rem; font-weight:700; color:#e2e8f0; display:block; }
+.summary-label { font-size:.78rem; color:rgba(226,232,240,.4); }
+
+/* Table */
+.factures-table-wrap { overflow-x:auto; background:rgba(255,255,255,.02); border:1px solid rgba(196,149,42,.08); border-radius:12px; }
+.factures-table { width:100%; border-collapse:collapse; font-size:.875rem; }
+.factures-table th {
+  padding:12px 16px; text-align:left; color:rgba(196,149,42,.7);
+  font-size:.7rem; text-transform:uppercase; letter-spacing:.08em;
+  border-bottom:1px solid rgba(196,149,42,.1); white-space:nowrap;
+}
+.factures-table td { padding:13px 16px; border-bottom:1px solid rgba(255,255,255,.04); color:#e2e8f0; vertical-align:middle; }
+.factures-table tr:last-child td { border-bottom:none; }
+.factures-table tr:hover td { background:rgba(196,149,42,.03); }
+.factures-table tr.row-retard td { background:rgba(239,68,68,.03); }
+
+.numero-cell { font-weight:700; color:#C4952A; white-space:nowrap; }
+.numero-cell i { margin-right:6px; opacity:.6; }
+.montant-ttc { font-weight:700; color:#C4952A; }
+.date-retard { color:#ef4444; }
+.retard-badge { display:inline-flex; align-items:center; gap:4px; margin-left:8px;
+  background:rgba(239,68,68,.12); color:#ef4444; font-size:.68rem; font-weight:700;
+  padding:2px 7px; border-radius:10px; }
+
+/* Statut chips */
+.statut-chip { padding:3px 12px; border-radius:20px; font-size:.72rem; font-weight:700; white-space:nowrap; }
+.statut-payee   { background:rgba(16,185,129,.15); color:#10b981; }
+.statut-attente { background:rgba(245,158,11,.15);  color:#f59e0b; }
+.statut-retard  { background:rgba(239,68,68,.15);  color:#ef4444; }
+.statut-annulee { background:rgba(107,114,128,.15); color:#6b7280; }
+
+/* PDF button */
+.btn-pdf {
+  width:34px; height:34px; border-radius:8px; border:none; cursor:pointer;
+  background:rgba(239,68,68,.1); color:#ef4444;
+  display:flex; align-items:center; justify-content:center;
+  font-size:.85rem; transition:all .2s;
+}
+.btn-pdf:hover:not(:disabled) { background:rgba(239,68,68,.25); }
+.btn-pdf:disabled { opacity:.3; cursor:not-allowed; }
+
+/* Loading / Empty */
+.loading { display:flex; justify-content:center; padding:60px; }
+.spinner { width:36px; height:36px; border:3px solid rgba(196,149,42,.2); border-top-color:#C4952A; border-radius:50%; animation:spin .8s linear infinite; }
+@keyframes spin { to { transform:rotate(360deg); } }
+
+.empty-state { text-align:center; padding:70px; color:rgba(226,232,240,.25); }
+.empty-state i { font-size:3rem; display:block; margin-bottom:14px; color:rgba(196,149,42,.2); }
+.empty-state p { font-size:1rem; margin:0 0 6px; color:rgba(226,232,240,.4); }
+.empty-state span { font-size:.82rem; }
+
+@media (max-width:768px) {
+  .factures-summary { grid-template-columns:1fr; }
+}

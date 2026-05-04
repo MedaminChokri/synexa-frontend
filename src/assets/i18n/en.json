@@ -1,0 +1,71 @@
+{
+  "navbar": {
+    "home": "Home",
+    "services": "Services",
+    "insights": "Insights",
+    "agency": "The Agency",
+    "contact": "Contact",
+    "espaceClient": "Client Space",
+    "contactUs": "Contact Us",
+    "careers": "Careers",
+    "getQuote": "Get a free quote"
+  },
+  "hero": {
+    "subtitle": "Strategic Consulting Group",
+    "title1": "Transform Your",
+    "title2": "Vision into Results",
+    "description": "SYNEXA Consult supports organizations in their strategic, technological and operational transformation.",
+    "cta1": "Discover our services",
+    "cta2": "Contact us",
+    "cta": "Let's talk"
+  },
+  "services": {
+    "title": "Our Areas of Expertise",
+    "subtitle": "Multi-sector expertise at the service of your performance",
+    "conseil": "Consulting & Management",
+    "techIA": "Tech & Artificial Intelligence",
+    "expertise": "Expertise"
+  },
+  "stats": {
+    "title": "SYNEXA in Numbers"
+  },
+  "equipe": {
+    "title": "Our Team",
+    "subtitle": "Passionate experts at your service"
+  },
+  "temoignages": {
+    "title": "They trust us",
+    "subtitle": "What our clients say"
+  },
+  "contact": {
+    "title": "Contact Us",
+    "subtitle": "Let's talk about your project",
+    "name": "Full Name",
+    "email": "Email",
+    "phone": "Phone",
+    "company": "Company",
+    "service": "Service",
+    "message": "Message",
+    "send": "Send",
+    "sending": "Sending..."
+  },
+  "footer": {
+    "description": "SYNEXA Consult is a strategic and operational consulting group present in Tunisia, Europe and Africa.",
+    "links": "Quick Links",
+    "copyright": "2026 SYNEXA Consult. All rights reserved.",
+    "legal": "Legal Notice",
+    "privacy": "Privacy Policy"
+  },
+  "admin": {
+    "login": "Administration Login",
+    "dashboard": "Dashboard",
+    "services": "Services",
+    "temoignages": "Testimonials",
+    "statistiques": "Statistics",
+    "equipe": "Team",
+    "contacts": "Contacts",
+    "rendezvous": "Appointments",
+    "utilisateurs": "Users",
+    "logout": "Logout"
+  }
+}

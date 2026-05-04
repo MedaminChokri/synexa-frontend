@@ -1,0 +1,44 @@
+.agence-page { background: #0D0F1A; min-height: 100vh; color: #fff; }
+
+.agence-header { padding: 140px 0 80px; background: linear-gradient(135deg, #13162B, #1A1E38); }
+.agence-header .back-link { color: #6C63FF; text-decoration: none; font-size: 14px; display: inline-flex; align-items: center; gap: 8px; margin-bottom: 20px; }
+.agence-header h1 { font-size: 3rem; font-weight: 700; margin-bottom: 12px; }
+.agence-header .highlight { color: #6C63FF; }
+.agence-header .subtitle { color: #94a3b8; font-size: 1.15rem; }
+
+.section { padding: 72px 0; }
+
+
+.section-heading { text-align: center; margin-bottom: 48px; }
+.section-heading .eyebrow { color: #6C63FF; font-size: 0.85rem; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 8px; }
+.section-heading h2 { font-size: 2rem; font-weight: 700; }
+
+.histoire-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+.histoire-card { background: #13162B; border: 1px solid #1e2340; border-radius: 16px; padding: 32px; }
+.histoire-card:hover { border-color: #6C63FF; }
+.card-icon { width: 52px; height: 52px; background: rgba(108,99,255,0.15); border-radius: 12px; display: flex; align-items: center; justify-content: center; margin-bottom: 20px; }
+.card-icon i { font-size: 22px; color: #6C63FF; }
+.histoire-card h3 { font-size: 1.1rem; font-weight: 600; margin-bottom: 10px; }
+.histoire-card p { color: #94a3b8; font-size: 0.95rem; line-height: 1.6; }
+
+.valeurs-section { background: #13162B; }
+.valeurs-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; }
+.valeur-card { background: #1A1E38; border: 1px solid #2a2f52; border-radius: 16px; padding: 28px; }
+.valeur-card:hover { border-color: #A78BFA; }
+.valeur-card h3 { font-size: 1rem; font-weight: 600; margin-bottom: 8px; }
+.valeur-card p { color: #94a3b8; font-size: 0.9rem; line-height: 1.6; }
+
+.cta-section { background: #0D0F1A; }
+.cta-panel { text-align: center; padding: 56px; background: linear-gradient(135deg, #6C63FF22, #A78BFA22); border-radius: 24px; border: 1px solid #6C63FF33; }
+.cta-panel h2 { font-size: 2rem; margin-bottom: 12px; }
+.cta-panel p { color: #94a3b8; margin-bottom: 28px; }
+.btn { display: inline-block; padding: 14px 36px; border-radius: 8px; font-weight: 600; text-decoration: none; transition: opacity 0.2s; }
+.btn-primary { background: #6C63FF; color: #fff; }
+.btn-primary:hover { opacity: 0.85; }
+
+@media (max-width: 768px) {
+  .chiffres-grid { grid-template-columns: repeat(2, 1fr); }
+  .histoire-grid { grid-template-columns: 1fr; }
+  .valeurs-grid { grid-template-columns: repeat(2, 1fr); }
+  .agence-header h1 { font-size: 2rem; }
+}

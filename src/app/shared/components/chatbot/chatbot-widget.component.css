@@ -1,0 +1,491 @@
+/* ============================================================
+   chatbot-widget.component.css  —  Design professionnel SYNEXA
+   ============================================================ */
+
+:host {
+  --chat-primary:   #2563eb;
+  --chat-primary-2: #1d4ed8;
+  --chat-gold:      #C4952A;
+  --chat-dark:      #0a1628;
+  --chat-dark-2:    #0f1d32;
+  --chat-border:    rgba(37, 99, 235, 0.2);
+  --chat-radius:    16px;
+  --chat-white:     #ffffff;
+  --chat-grey:      #f1f5f9;
+  --chat-text:      #1e293b;
+  --chat-text-soft: #64748b;
+}
+
+/* ── FAB Button (pill) ───────────────────────────────────────── */
+.chatbot-fab {
+  position: fixed;
+  bottom: 32px;
+  right: 32px;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: linear-gradient(135deg, #1e3a8a 0%, #2563eb 60%, #3b82f6 100%);
+  border-radius: 50px;
+  padding: 12px 20px 12px 14px;
+  cursor: pointer;
+  box-shadow:
+    0 6px 24px rgba(37, 99, 235, 0.4),
+    0 2px 8px rgba(0, 0, 0, 0.15);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  animation: fabSlideIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  overflow: hidden;
+}
+
+@keyframes fabSlideIn {
+  from { transform: translateY(80px); opacity: 0; }
+  to   { transform: translateY(0);    opacity: 1; }
+}
+
+.chatbot-fab:hover {
+  transform: translateY(-3px);
+  box-shadow:
+    0 10px 32px rgba(37, 99, 235, 0.55),
+    0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+/* Shimmer on hover */
+.chatbot-fab::before {
+  content: '';
+  position: absolute;
+  top: 0; left: -100%;
+  width: 60%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.12), transparent);
+  transition: left 0.5s ease;
+}
+
+.chatbot-fab:hover::before { left: 150%; }
+
+/* Glow ring */
+.fab-glow {
+  position: absolute;
+  inset: -3px;
+  border-radius: 50px;
+  background: linear-gradient(135deg, #3b82f6, #6366f1);
+  opacity: 0;
+  z-index: -1;
+  filter: blur(8px);
+  transition: opacity 0.25s ease;
+}
+
+.chatbot-fab:hover .fab-glow { opacity: 0.6; }
+
+/* Icon circle */
+.fab-icon-wrap {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.18);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: #fff;
+  border: 1.5px solid rgba(255,255,255,0.25);
+}
+
+/* Text */
+.fab-text {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.fab-title {
+  color: #fff;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.1px;
+  white-space: nowrap;
+}
+
+.fab-sub {
+  color: rgba(196, 221, 255, 0.85);
+  font-size: 11px;
+  font-weight: 400;
+  white-space: nowrap;
+}
+
+/* ── Chat Window ─────────────────────────────────────────────── */
+.synexa-chat-window {
+  position: fixed;
+  bottom: 108px;
+  right: 32px;
+  width: 350px;
+  height: 490px;
+  background: var(--chat-white);
+  border-radius: var(--chat-radius);
+  box-shadow:
+    0 20px 60px rgba(0, 0, 0, 0.18),
+    0 0 0 1px rgba(37, 99, 235, 0.08);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  z-index: 9998;
+  transform: scale(0.88) translateY(16px);
+  opacity: 0;
+  pointer-events: none;
+  transition:
+    transform 0.28s cubic-bezier(0.34, 1.56, 0.64, 1),
+    opacity   0.22s ease;
+  transform-origin: bottom right;
+}
+
+.synexa-chat-window--ouvert {
+  transform: scale(1) translateY(0);
+  opacity: 1;
+  pointer-events: all;
+}
+
+/* ── Header ───────────────────────────────────────────────────── */
+.synexa-chat-header {
+  background: linear-gradient(135deg, #1e3a8a, #2563eb);
+  color: #fff;
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-shrink: 0;
+}
+
+.synexa-chat-header__info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.synexa-chat-avatar {
+  width: 38px;
+  height: 38px;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  border: 2px solid rgba(255,255,255,0.25);
+}
+
+.synexa-chat-header__nom {
+  display: block;
+  font-weight: 700;
+  font-size: 14px;
+  letter-spacing: 0.2px;
+}
+
+.synexa-chat-header__statut {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  opacity: 0.8;
+  margin-top: 2px;
+}
+
+.synexa-statut-dot {
+  width: 7px;
+  height: 7px;
+  background: #4ade80;
+  border-radius: 50%;
+  display: inline-block;
+  box-shadow: 0 0 6px rgba(74, 222, 128, 0.7);
+}
+
+.synexa-chat-header__fermer {
+  background: rgba(255, 255, 255, 0.12);
+  border: none;
+  color: #fff;
+  cursor: pointer;
+  border-radius: 8px;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s;
+  outline: none;
+  flex-shrink: 0;
+}
+
+.synexa-chat-header__fermer:hover { background: rgba(255, 255, 255, 0.22); }
+
+/* ── Messages ─────────────────────────────────────────────────── */
+.synexa-chat-messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background: #f8fafc;
+  scroll-behavior: smooth;
+}
+
+.synexa-chat-messages::-webkit-scrollbar { width: 4px; }
+.synexa-chat-messages::-webkit-scrollbar-track { background: transparent; }
+.synexa-chat-messages::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+
+.synexa-message {
+  display: flex;
+  align-items: flex-end;
+  gap: 7px;
+  max-width: 88%;
+  animation: msgAppear 0.2s ease;
+}
+
+@keyframes msgAppear {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.synexa-message--utilisateur {
+  align-self: flex-end;
+  flex-direction: row-reverse;
+}
+
+.synexa-message--bot {
+  align-self: flex-start;
+  flex-direction: row;
+}
+
+.synexa-message__avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: #e0e7ff;
+  color: #2563eb;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-bottom: 2px;
+}
+
+.synexa-message__bulle {
+  padding: 10px 13px;
+  border-radius: 16px;
+  max-width: 100%;
+}
+
+.synexa-message--utilisateur .synexa-message__bulle {
+  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+  color: #fff;
+  border-bottom-right-radius: 4px;
+}
+
+.synexa-message--bot .synexa-message__bulle {
+  background: #fff;
+  color: #1e293b;
+  border-bottom-left-radius: 4px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+}
+
+.synexa-message__texte {
+  margin: 0;
+  font-size: 13.5px;
+  line-height: 1.55;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.synexa-message__heure {
+  display: block;
+  font-size: 10px;
+  margin-top: 4px;
+  opacity: 0.55;
+  text-align: right;
+}
+
+/* Typing indicator */
+.synexa-frappe-bulle {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 12px 16px;
+  min-width: 56px;
+}
+
+.synexa-frappe-point {
+  width: 7px;
+  height: 7px;
+  background: #cbd5e1;
+  border-radius: 50%;
+  animation: dotBounce 1.3s infinite ease-in-out;
+}
+
+.synexa-frappe-point:nth-child(1) { animation-delay: 0s; }
+.synexa-frappe-point:nth-child(2) { animation-delay: 0.22s; }
+.synexa-frappe-point:nth-child(3) { animation-delay: 0.44s; }
+
+@keyframes dotBounce {
+  0%, 60%, 100% { transform: translateY(0);   background: #cbd5e1; }
+  30%           { transform: translateY(-6px); background: #2563eb; }
+}
+
+/* ── Input Zone ──────────────────────────────────────────────── */
+.synexa-chat-input-zone {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 14px;
+  background: #fff;
+  border-top: 1px solid #e2e8f0;
+  flex-shrink: 0;
+}
+
+.synexa-chat-input {
+  flex: 1;
+  padding: 9px 14px;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 22px;
+  font-size: 13.5px;
+  outline: none;
+  color: #1e293b;
+  background: #f8fafc;
+  transition: border-color 0.15s;
+  font-family: inherit;
+}
+
+.synexa-chat-input:focus {
+  border-color: #2563eb;
+  background: #fff;
+}
+
+.synexa-chat-input:disabled { opacity: 0.6; cursor: not-allowed; }
+
+.synexa-chat-envoyer {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: transform 0.15s, box-shadow 0.15s;
+  outline: none;
+  box-shadow: 0 2px 10px rgba(37,99,235,0.35);
+}
+
+.synexa-chat-envoyer:hover:not(:disabled) {
+  transform: scale(1.08);
+  box-shadow: 0 4px 16px rgba(37,99,235,0.5);
+}
+
+.synexa-chat-envoyer:disabled {
+  background: #cbd5e1;
+  box-shadow: none;
+  cursor: not-allowed;
+}
+
+/* Statut dynamique online/offline */
+.synexa-statut-dot--online {
+  background: #4ade80;
+  box-shadow: 0 0 6px rgba(74, 222, 128, 0.7);
+}
+.synexa-statut-dot:not(.synexa-statut-dot--online) {
+  background: #f59e0b;
+  box-shadow: 0 0 6px rgba(245, 158, 11, 0.6);
+}
+
+/* FAB status dot */
+.fab-status-dot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #f59e0b;
+  margin-right: 4px;
+  vertical-align: middle;
+}
+.fab-status-dot--online {
+  background: #4ade80;
+  box-shadow: 0 0 5px rgba(74,222,128,0.7);
+}
+
+/* ── Header actions (reset + fermer) ─────────────────────────── */
+.synexa-chat-header__actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.synexa-chat-header__btn {
+  background: rgba(255, 255, 255, 0.12);
+  border: none;
+  color: #fff;
+  cursor: pointer;
+  border-radius: 8px;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s;
+  outline: none;
+  flex-shrink: 0;
+}
+.synexa-chat-header__btn:hover { background: rgba(255, 255, 255, 0.24); }
+
+/* ── Suggestions rapides ─────────────────────────────────────── */
+.synexa-suggestions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 8px 14px;
+  background: #f8fafc;
+  border-top: 1px solid #e2e8f0;
+  flex-shrink: 0;
+  animation: msgAppear 0.3s ease;
+}
+
+.synexa-suggestion-btn {
+  padding: 5px 12px;
+  font-size: 12px;
+  font-family: inherit;
+  background: #fff;
+  border: 1.5px solid #bfdbfe;
+  color: #2563eb;
+  border-radius: 16px;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s, transform 0.12s;
+  white-space: nowrap;
+  font-weight: 500;
+}
+
+.synexa-suggestion-btn:hover {
+  background: #eff6ff;
+  border-color: #2563eb;
+  transform: translateY(-1px);
+}
+
+/* ── Responsive ─────────────────────────────────────────────── */
+@media (max-width: 480px) {
+  .synexa-chat-window {
+    width: calc(100vw - 24px);
+    right: 12px;
+    bottom: 96px;
+    height: 70vh;
+    max-height: 500px;
+  }
+
+  .chatbot-fab {
+    bottom: 20px;
+    right: 16px;
+    padding: 10px 16px 10px 12px;
+    gap: 10px;
+  }
+
+  .fab-title { font-size: 13px; }
+  .fab-sub   { display: none; }
+}

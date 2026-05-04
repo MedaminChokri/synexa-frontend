@@ -1,0 +1,80 @@
+<div class="messenger-container">
+  <!-- Chargement -->
+  <div class="loading-state" *ngIf="!conversation">
+    <i class="fas fa-spinner fa-spin"></i>
+    <p>Connexion à la messagerie...</p>
+  </div>
+
+  <!-- Zone de chat principale -->
+  <div class="chat-wrapper" *ngIf="conversation">
+    <!-- Header -->
+    <div class="chat-header">
+      <div class="header-avatar">
+        <i class="fas fa-headset"></i>
+      </div>
+      <div class="header-info">
+        <h3>Support SYNEXA</h3>
+        <span class="online-status"><i class="fas fa-circle"></i> En ligne — répond généralement en moins d'une heure</span>
+      </div>
+    </div>
+
+    <!-- Messages -->
+    <div class="messages-list" #chatScroll>
+      <div class="day-separator">
+        <span>Messagerie directe avec l'équipe SYNEXA</span>
+      </div>
+
+      <div class="message" *ngFor="let msg of messages"
+           [class.msg-sent]="msg.expediteurType === 'CLIENT'"
+           [class.msg-received]="msg.expediteurType === 'ADMIN'">
+
+        <div class="msg-avatar" *ngIf="msg.expediteurType === 'ADMIN'">
+          <i class="fas fa-user-tie"></i>
+        </div>
+
+        <div class="msg-content">
+          <div class="msg-bubble">
+            <!-- Image -->
+            <ng-container *ngIf="isImage(msg.contenu)">
+              <img [src]="getFileUrl(msg.contenu)" class="msg-image" alt="image envoyée" (click)="openFile(getFileUrl(msg.contenu))">
+            </ng-container>
+            <!-- PDF -->
+            <ng-container *ngIf="isPdf(msg.contenu)">
+              <a [href]="getFileUrl(msg.contenu)" target="_blank" class="msg-file">
+                <i class="fas fa-file-pdf"></i>
+                <span>{{ getFileName(msg.contenu) }}</span>
+                <i class="fas fa-external-link-alt"></i>
+              </a>
+            </ng-container>
+            <!-- Texte -->
+            <ng-container *ngIf="!isImage(msg.contenu) && !isPdf(msg.contenu)">
+              {{ msg.contenu }}
+            </ng-container>
+          </div>
+          <span class="msg-time">{{ msg.dateEnvoi | date:'HH:mm' }}</span>
+        </div>
+      </div>
+
+      <!-- État vide -->
+      <div class="empty-messages" *ngIf="messages.length === 0">
+        <i class="fas fa-comments"></i>
+        <p>Aucun message pour l'instant.<br>Envoyez votre premier message à l'équipe SYNEXA !</p>
+      </div>
+    </div>
+
+    <!-- Zone de saisie -->
+    <div class="input-area">
+      <input type="file" #fileInput (change)="onFileSelected($event)" accept="image/*,.pdf" style="display:none">
+      <button type="button" class="btn-attach" (click)="triggerFileUpload()" [disabled]="uploading" title="Joindre image ou PDF">
+        <i class="fas fa-paperclip"></i>
+      </button>
+      <input class="msg-input" type="text" [(ngModel)]="newMessage" name="msg"
+             placeholder="Écrivez votre message..."
+             autocomplete="off"
+             (keydown)="onKeyDown($event)">
+      <button type="button" class="btn-send" (click)="sendMessage()" [disabled]="!newMessage.trim() || uploading">
+        <i class="fas" [class.fa-paper-plane]="!uploading" [class.fa-spinner]="uploading" [class.fa-spin]="uploading"></i>
+      </button>
+    </div>
+  </div>
+</div>

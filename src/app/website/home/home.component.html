@@ -1,0 +1,145 @@
+<app-navbar></app-navbar>
+
+<main class="synexa-home">
+
+  <!-- ═══ HERO ═══ -->
+  <section class="hero section section-dark">
+    <div class="container hero-grid">
+      <div class="hero-copy animate-on-scroll">
+        <p class="eyebrow">Cabinet de Conseil & Transformation</p>
+        <h1>Votre partenaire stratégique pour performer</h1>
+        <p class="subtitle">
+          SYNEXA accompagne les dirigeants et leurs équipes dans la transformation de leurs organisations :
+          conseil stratégique, digitalisation, pilotage de projets et développement des compétences.
+        </p>
+        <div class="cta-group">
+          <a class="btn btn-primary" routerLink="/login">Démarrer un projet</a>
+          <a class="btn btn-secondary" routerLink="/services/conseil">Nos services</a>
+        </div>
+      </div>
+      <div class="hero-visual animate-on-scroll">
+        <div class="dashboard-preview">
+          <div class="preview-header">
+            <span class="dot"></span><span class="dot"></span><span class="dot"></span>
+            <span class="title">SYNEXA — Tableau de bord</span>
+          </div>
+          <div class="preview-grid">
+            <article><h4>Missions actives</h4><p>12 projets en cours</p></article>
+            <article><h4>Performance</h4><p>+43% gain moyen</p></article>
+            <article><h4>Satisfaction client</h4><p>98% positif</p></article>
+            <article><h4>Experts mobilisés</h4><p>50+ consultants</p></article>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ POURQUOI SYNEXA ═══ -->
+  <section class="section section-dark why-section">
+    <div class="container">
+      <div class="section-heading animate-on-scroll">
+        <p class="eyebrow">Pourquoi SYNEXA</p>
+        <h2>Un cabinet différent, des résultats mesurables</h2>
+      </div>
+      <div class="why-grid">
+        <div class="why-card animate-on-scroll" *ngFor="let item of whyItems">
+          <div class="why-icon"><i [class]="item.icon"></i></div>
+          <h3>{{ item.titre }}</h3>
+          <p>{{ item.desc }}</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ SERVICES ═══ -->
+  <section class="section services-section">
+    <div class="container">
+      <div class="section-heading animate-on-scroll">
+        <p class="eyebrow">Nos Expertises</p>
+        <h2>Des services pensés pour votre croissance</h2>
+      </div>
+      <div class="services-grid">
+        <a class="service-card animate-on-scroll" *ngFor="let service of services" [routerLink]="service.link">
+          <span class="service-icon">{{ service.icon }}</span>
+          <h3>{{ service.title }}</h3>
+          <p>{{ service.description }}</p>
+          <span class="card-arrow">→</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ APPROCHE ═══ -->
+  <section class="section section-dark approche-section">
+    <div class="container">
+      <div class="section-heading animate-on-scroll">
+        <p class="eyebrow">Notre Approche</p>
+        <h2>Une méthode éprouvée en 4 étapes</h2>
+      </div>
+      <div class="steps-grid">
+        <div class="step-card animate-on-scroll" *ngFor="let step of steps; let i = index">
+          <span class="step-num">0{{ i + 1 }}</span>
+          <h3>{{ step.titre }}</h3>
+          <p>{{ step.desc }}</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ SECTEURS ═══ -->
+  <section class="section secteurs-section">
+    <div class="container">
+      <div class="section-heading animate-on-scroll">
+        <p class="eyebrow">Secteurs d'intervention</p>
+        <h2>Une expertise multi-sectorielle au service de votre performance</h2>
+      </div>
+      <div class="secteurs-grid">
+        <div class="secteur-card animate-on-scroll" *ngFor="let s of secteurs">
+          <i [class]="s.icon"></i>
+          <span>{{ s.label }}</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ CHATBOT ═══ -->
+  <section class="section section-dark chatbot-section">
+    <div class="container chatbot-grid">
+      <div class="animate-on-scroll">
+        <p class="eyebrow">Assistant IA SYNEXA</p>
+        <h2>Un assistant intelligent disponible 24h/24</h2>
+        <p>
+          Notre assistant IA répond à vos questions sur nos services, vous oriente vers les bons experts
+          et vous accompagne dans vos premières démarches — à tout moment.
+        </p>
+        <a class="btn btn-primary" routerLink="/contact" style="margin-top:24px;display:inline-flex">Parler à un expert</a>
+      </div>
+      <div class="chat-visual animate-on-scroll">
+        <div class="chat-line user">Quels services proposez-vous en transformation digitale ?</div>
+        <div class="chat-line bot">Nous couvrons l'audit SI, la feuille de route digitale, la modernisation des processus et la conduite du changement. Souhaitez-vous un rendez-vous ?</div>
+        <div class="chat-line user">Oui, comment planifier un RDV ?</div>
+        <div class="chat-line bot">Je vous redirige vers notre formulaire de contact. Un consultant vous rappellera sous 24h.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ CTA FINAL ═══ -->
+  <section class="section final-cta section-dark">
+    <div class="container cta-panel animate-on-scroll">
+      <p class="eyebrow">Prêt à transformer votre organisation ?</p>
+      <h2>Travaillons ensemble dès aujourd'hui</h2>
+      <p style="color:#94a3b8;margin:16px auto;max-width:48ch">
+        Nos consultants sont disponibles pour analyser vos enjeux et vous proposer une approche sur mesure.
+      </p>
+      <div class="cta-group">
+        <a class="btn btn-primary" routerLink="/contact">Nous contacter</a>
+        <a class="btn btn-secondary" routerLink="/agence">Découvrir SYNEXA</a>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<app-footer></app-footer>
+
+<app-chatbot-widget></app-chatbot-widget>

@@ -1,0 +1,86 @@
+<div class="journal-page">
+
+  <div class="journal-header">
+    <div>
+      <h2 class="journal-title"><i class="fas fa-history"></i> Journal d'activité</h2>
+      <p class="journal-subtitle">Historique chronologique des actions sensibles effectuées sur le système</p>
+    </div>
+    <button class="btn-refresh" (click)="loadJournal()" title="Actualiser">
+      <i class="fas fa-sync-alt"></i> Actualiser
+    </button>
+  </div>
+
+  <!-- Filtres -->
+  <div class="journal-filters">
+    <div class="filter-search">
+      <i class="fas fa-search"></i>
+      <input type="text" [(ngModel)]="searchTerm" (ngModelChange)="applyFilters()"
+             placeholder="Rechercher par utilisateur, action, détails..." />
+    </div>
+    <select [(ngModel)]="niveauFilter" (ngModelChange)="applyFilters()" class="filter-select">
+      <option value="">Tous les niveaux</option>
+      <option value="INFO">Info</option>
+      <option value="ATTENTION">Attention</option>
+      <option value="CRITIQUE">Critique</option>
+    </select>
+    <select [(ngModel)]="entiteFilter" (ngModelChange)="applyFilters()" class="filter-select">
+      <option value="">Toutes les entités</option>
+      <option *ngFor="let e of getUniqueEntites()" [value]="e">{{ e }}</option>
+    </select>
+  </div>
+
+  <!-- Compteur -->
+  <div class="journal-count">
+    <span>{{ filtered.length }} entrée(s) affichée(s)</span>
+    <div class="legend">
+      <span class="legend-item" style="color:#3b82f6"><i class="fas fa-circle"></i> Info</span>
+      <span class="legend-item" style="color:#f59e0b"><i class="fas fa-circle"></i> Attention</span>
+      <span class="legend-item" style="color:#ef4444"><i class="fas fa-circle"></i> Critique</span>
+    </div>
+  </div>
+
+  <!-- Loading -->
+  <div *ngIf="loading" class="loading"><div class="spinner"></div></div>
+
+  <!-- Timeline -->
+  <div class="journal-timeline" *ngIf="!loading && filtered.length > 0">
+    <div class="timeline-entry" *ngFor="let entry of filtered" [class]="'niveau-' + (entry.niveau ? entry.niveau.toLowerCase() : '')">
+      <div class="timeline-marker">
+        <span class="marker-dot" [style.background]="getNiveauColor(entry.niveau)">
+          <i [class]="getNiveauIcon(entry.niveau)"></i>
+        </span>
+        <div class="marker-line"></div>
+      </div>
+      <div class="timeline-card">
+        <div class="card-header">
+          <div class="card-meta">
+            <span class="card-user">
+              <div class="user-avatar">{{ entry.utilisateur ? entry.utilisateur.charAt(0) : '?' }}</div>
+              {{ entry.utilisateur }}
+            </span>
+            <span class="card-action">{{ entry.action ? entry.action.replace('_', ' ') : '' }}</span>
+            <span class="card-entite">{{ entry.entite }}</span>
+          </div>
+          <div class="card-right">
+            <span class="card-niveau" [style.background]="getNiveauColor(entry.niveau) + '22'" [style.color]="getNiveauColor(entry.niveau)">
+              {{ entry.niveau }}
+            </span>
+            <span class="card-date">
+              <i class="fas fa-clock"></i>
+              {{ entry.dateAction | date:'dd/MM/yyyy à HH:mm' }}
+            </span>
+          </div>
+        </div>
+        <p class="card-details">{{ entry.details }}</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Empty -->
+  <div class="empty-state" *ngIf="!loading && filtered.length === 0">
+    <i class="fas fa-clipboard-list"></i>
+    <p>Aucune entrée dans le journal</p>
+    <span *ngIf="searchTerm || niveauFilter || entiteFilter">Essayez de modifier vos filtres</span>
+  </div>
+
+</div>

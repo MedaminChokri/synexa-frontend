@@ -1,0 +1,60 @@
+<app-navbar></app-navbar>
+
+<div class="agence-page">
+
+  <!-- Header -->
+  <section class="agence-header">
+    <div class="container">
+      <h1>L'Agence <span class="highlight">SYNEXA</span></h1>
+      <p class="subtitle">Cabinet de conseil stratégique et de transformation digitale</p>
+    </div>
+  </section>
+
+  <!-- Histoire / Mission / Vision -->
+  <section class="section histoire-section">
+    <div class="container">
+      <div class="section-heading animate-on-scroll">
+        <p class="eyebrow">Qui sommes-nous</p>
+        <h2>Notre ADN</h2>
+      </div>
+      <div class="histoire-grid">
+        <div class="histoire-card animate-on-scroll" *ngFor="let h of histoire">
+          <div class="card-icon"><i [class]="h.icone"></i></div>
+          <h3>{{ h.titre }}</h3>
+          <p>{{ h.contenu }}</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Valeurs -->
+  <section class="section valeurs-section">
+    <div class="container">
+      <div class="section-heading animate-on-scroll">
+        <p class="eyebrow">Ce qui nous guide</p>
+        <h2>Nos Valeurs</h2>
+      </div>
+      <div class="valeurs-grid">
+        <div class="valeur-card animate-on-scroll" *ngFor="let v of valeurs">
+          <div class="card-icon"><i [class]="v.icone"></i></div>
+          <h3>{{ v.titre }}</h3>
+          <p>{{ v.contenu }}</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="section cta-section">
+    <div class="container">
+      <div class="cta-panel animate-on-scroll">
+        <h2>Travaillons ensemble</h2>
+        <p>Contactez-nous pour discuter de votre projet.</p>
+        <a routerLink="/contact" class="btn btn-primary">Nous contacter</a>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<app-footer></app-footer>

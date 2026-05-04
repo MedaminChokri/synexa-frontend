@@ -1,0 +1,166 @@
+<div class="crm-agenda-page" *ngIf="!loading">
+  <!-- En-tête -->
+  <div class="page-header">
+    <div class="header-left">
+      <h2 class="page-title">
+        <i class="fas fa-calendar-alt"></i>
+        Agenda des Rendez-vous
+      </h2>
+      <p class="page-subtitle">{{ rdvList.length }} rendez-vous au total</p>
+    </div>
+    <button class="btn-primary" (click)="openCreateModal()">
+      <i class="fas fa-plus"></i>
+      Nouveau RDV
+    </button>
+  </div>
+
+  <!-- Filtre -->
+  <div class="filters-bar">
+    <div class="filter-group">
+      <label>Statut</label>
+      <select [(ngModel)]="filtreStatut" (change)="onFilterChange()">
+        <option value="">Tous</option>
+        <option *ngFor="let s of statuts" [value]="s">{{ statutLabels[s] }}</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Liste groupée par date -->
+  <div class="agenda-list" *ngIf="groupedRdv.length > 0">
+    <div class="date-group" *ngFor="let group of groupedRdv">
+      <div class="date-header" [class.today]="isToday(group.date)" [class.past]="isPast(group.date)">
+        <div class="date-indicator">
+          <span class="date-day">{{ group.date | date:'dd' }}</span>
+          <span class="date-month">{{ group.date | date:'MMM yyyy' }}</span>
+        </div>
+        <span class="today-badge" *ngIf="isToday(group.date)">Aujourd'hui</span>
+        <span class="rdv-count">{{ group.items.length }} RDV</span>
+      </div>
+
+      <div class="rdv-cards">
+        <div class="rdv-card" *ngFor="let rdv of group.items">
+          <div class="rdv-time-col">
+            <span class="rdv-time">{{ rdv.dateHeure | date:'HH:mm' }}</span>
+            <span class="rdv-duration">{{ rdv.dureeMinutes }} min</span>
+          </div>
+
+          <div class="rdv-info-col">
+            <span class="rdv-title">{{ rdv.titre }}</span>
+            <span class="rdv-lead">
+              <i class="fas fa-user"></i>
+              {{ getLeadName(rdv.leadId) }}
+            </span>
+            <span class="rdv-lieu" *ngIf="rdv.lieu">
+              <i class="fas fa-map-marker-alt"></i>
+              {{ rdv.lieu }}
+            </span>
+          </div>
+
+          <div class="rdv-badges-col">
+            <span class="type-badge" [class.visio]="rdv.type === 'VISIO'">
+              {{ rdv.type === 'VISIO' ? '📹 Visio' : '📍 Physique' }}
+            </span>
+            <span class="statut-badge"
+              [style.background]="statutColors[rdv.statut] + '1a'"
+              [style.color]="statutColors[rdv.statut]">
+              {{ statutLabels[rdv.statut] }}
+            </span>
+          </div>
+
+          <div class="rdv-actions-col">
+            <!-- Changer statut -->
+            <select class="statut-select"
+              [ngModel]="rdv.statut"
+              (change)="changeStatut(rdv, $any($event.target).value)">
+              <option *ngFor="let s of statuts" [value]="s">{{ statutLabels[s] }}</option>
+            </select>
+            <button class="btn-icon btn-edit-small" (click)="openEditModal(rdv)" title="Modifier">
+              <i class="fas fa-edit"></i>
+            </button>
+            <button class="btn-icon btn-delete-small" (click)="deleteRdv(rdv.id!)" title="Supprimer">
+              <i class="fas fa-trash-alt"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Aucun RDV -->
+  <div class="empty-state" *ngIf="groupedRdv.length === 0">
+    <i class="fas fa-calendar-times"></i>
+    <span>Aucun rendez-vous trouvé</span>
+    <button class="btn-primary" (click)="openCreateModal()">Planifier un RDV</button>
+  </div>
+</div>
+
+<!-- Loading -->
+<div class="loading-container" *ngIf="loading">
+  <div class="loading-spinner"></div>
+  <span>Chargement de l'agenda...</span>
+</div>
+
+<!-- Modal Créer/Modifier RDV -->
+<div class="modal-overlay" *ngIf="showModal" (click)="closeModal()">
+  <div class="modal-content" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3>
+        <i class="fas fa-calendar-plus"></i>
+        {{ editingId ? 'Modifier le RDV' : 'Nouveau RDV' }}
+      </h3>
+      <button class="btn-close" (click)="closeModal()"><i class="fas fa-times"></i></button>
+    </div>
+    <form [formGroup]="rdvForm" (ngSubmit)="submitRdv()">
+      <div class="form-grid">
+        <div class="form-group full-width">
+          <label>Titre *</label>
+          <input type="text" formControlName="titre" placeholder="Titre du rendez-vous">
+        </div>
+        <div class="form-group">
+          <label>Lead associé</label>
+          <select formControlName="leadId">
+            <option [value]="null">-- Aucun --</option>
+            <option *ngFor="let lead of leads" [value]="lead.id">{{ lead.prenom }} {{ lead.nom }}</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Date et heure *</label>
+          <input type="datetime-local" formControlName="dateHeure">
+        </div>
+        <div class="form-group">
+          <label>Durée (minutes)</label>
+          <input type="number" formControlName="dureeMinutes" min="15">
+        </div>
+        <div class="form-group">
+          <label>Lieu</label>
+          <input type="text" formControlName="lieu" placeholder="Adresse ou lien">
+        </div>
+        <div class="form-group">
+          <label>Type</label>
+          <select formControlName="type">
+            <option value="PHYSIQUE">Physique</option>
+            <option value="VISIO">Visio</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Statut</label>
+          <select formControlName="statut">
+            <option *ngFor="let s of statuts" [value]="s">{{ statutLabels[s] }}</option>
+          </select>
+        </div>
+        <div class="form-group full-width">
+          <label>Notes post-RDV</label>
+          <textarea formControlName="notesPostRdv" rows="3" placeholder="Notes après le rendez-vous..."></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn-secondary" (click)="closeModal()">Annuler</button>
+        <button type="submit" class="btn-primary" [disabled]="rdvForm.invalid || submitting">
+          <i class="fas fa-check" *ngIf="!submitting"></i>
+          <i class="fas fa-spinner fa-spin" *ngIf="submitting"></i>
+          {{ editingId ? 'Modifier' : 'Créer' }}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

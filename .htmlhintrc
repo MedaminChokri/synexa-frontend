@@ -1,0 +1,14 @@
+{
+  "attr-lowercase": false,
+  "doctype-first": false,
+  "tag-pair": false,
+  "spec-char-escape": false,
+  "id-unique": false,
+  "src-not-empty": false,
+  "attr-no-duplication": false,
+  "attr-unsafe-chars": false,
+  "inline-style-disabled": false,
+  "attr-value-not-empty": false,
+  "input-requires-label": false,
+  "button-type": false
+}

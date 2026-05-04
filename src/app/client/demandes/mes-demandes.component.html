@@ -1,0 +1,142 @@
+<div class="page-container">
+  <div class="page-header">
+    <h2><i class="fas fa-list"></i> Mes Demandes</h2>
+    <p class="page-subtitle">Suivez le statut de toutes vos demandes en temps réel</p>
+  </div>
+
+  <!-- Filtres -->
+  <div class="filters-bar">
+    <div class="filter-group">
+      <label>Type</label>
+      <select [(ngModel)]="filtreType">
+        <option value="TOUS">Tous</option>
+        <option value="CONTACT">Contacts</option>
+        <option value="RDV">Rendez-vous</option>
+      </select>
+    </div>
+    <div class="filter-group">
+      <label>Statut</label>
+      <select [(ngModel)]="filtreStatut">
+        <option value="TOUS">Tous</option>
+        <option value="EN_ATTENTE">En attente</option>
+        <option value="EN_COURS">En cours</option>
+        <option value="CONFIRME">Confirmé</option>
+        <option value="ANNULE">Annulé</option>
+      </select>
+    </div>
+    <button class="btn-refresh" (click)="chargerDemandes()">
+      <i class="fas fa-sync-alt"></i> Actualiser
+    </button>
+  </div>
+
+  <!-- Loading -->
+  <div *ngIf="loading" class="loading-state">
+    <div class="spinner"></div><span>Chargement...</span>
+  </div>
+
+  <!-- Tableau des demandes -->
+  <div *ngIf="!loading">
+    <div *ngIf="toutesLesDemandes.length === 0" class="empty-state">
+      <i class="fas fa-inbox"></i>
+      <p>Aucune demande trouvée</p>
+    </div>
+
+    <div class="demandes-list" *ngIf="toutesLesDemandes.length > 0">
+      <div class="demande-card" *ngFor="let d of toutesLesDemandes">
+        <div class="demande-header">
+          <div style="display: flex; gap: 0.5rem; align-items: center;">
+            <span class="demande-type-badge" [class.rdv]="d.type==='RDV'">
+              <i [class]="d.type==='RDV' ? 'fas fa-calendar-alt' : 'fas fa-envelope'"></i>
+              {{ d.type === 'RDV' ? 'Rendez-vous' : 'Contact' }}
+            </span>
+            <span class="demande-service-badge" *ngIf="d.type==='RDV'" 
+                  [style.backgroundColor]="getServiceBadgeColor(d.sujet) + '22'"
+                  [style.color]="getServiceBadgeColor(d.sujet)">
+              {{ d.sujet === 'TECH_IA' ? 'TECH & IA' : d.sujet }}
+            </span>
+            <span class="demande-service-badge generic-badge" *ngIf="d.type==='CONTACT'">
+              Contact
+            </span>
+          </div>
+          <span class="demande-statut" [style.color]="getStatutColor(d.statut)"
+                [style.borderColor]="getStatutColor(d.statut)">
+            {{ d.statut }}
+          </span>
+        </div>
+
+        <h4 class="demande-sujet">{{ d.sujet }}</h4>
+        <p class="demande-message" *ngIf="d.message">{{ d.message }}</p>
+
+        <!-- Barre de progression -->
+        <div class="progression-bar">
+          <div class="progression-fill"
+               [style.width]="getProgressionWidth(d.progression)"
+               [style.background]="getStatutColor(d.statut)">
+          </div>
+        </div>
+        <div class="progression-label">
+          <span>Progression</span>
+          <span>{{ d.progression }}%</span>
+        </div>
+
+        <div class="demande-footer">
+          <span class="demande-date">
+            <i class="fas fa-clock"></i>
+            {{ (d.date || d.dateCreation) | date:'dd/MM/yyyy HH:mm' }}
+          </span>
+          <div class="demande-actions">
+            <!-- Envoyer un message (Task 3) -->
+            <button class="btn-message" (click)="envoyerMessage(d)">
+              <i class="fas fa-comment-dots"></i> Envoyer un message
+            </button>
+            <!-- Télécharger PDF si confirmé (amélioration 5) -->
+            <button *ngIf="d.type==='RDV' && d.statut==='CONFIRME'"
+                    class="btn-pdf" (click)="downloadPdf(d)"
+                    [disabled]="pdfLoading[d.id]">
+              <i class="fas fa-file-pdf"></i>
+              {{ pdfLoading[d.id] ? 'Génération...' : 'Confirmation PDF' }}
+            </button>
+            <!-- Donner avis si confirmé (amélioration 6) -->
+            <button *ngIf="d.type==='RDV' && d.statut==='CONFIRME'"
+                    class="btn-notation" (click)="ouvrirNotation(d)">
+              <i class="fas fa-star"></i> Donner un avis
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Notation (amélioration 6) -->
+  <div class="modal-overlay" *ngIf="showNotationModal" (click)="fermerNotation()">
+    <div class="modal-box" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h3><i class="fas fa-star"></i> Votre avis</h3>
+        <button class="modal-close" (click)="fermerNotation()"><i class="fas fa-times"></i></button>
+      </div>
+      <div class="modal-body">
+        <p class="modal-subtitle">Comment s'est passé votre rendez-vous pour <strong>{{ rdvANoter?.sujet }}</strong> ?</p>
+
+        <!-- Étoiles -->
+        <div class="stars-row">
+          <span *ngFor="let e of getEtoiles()" class="star"
+                [class.active]="e <= notation" (click)="setEtoile(e)">
+            <i class="fas fa-star"></i>
+          </span>
+        </div>
+        <p class="stars-label">{{ notation }}/5 étoile{{ notation > 1 ? 's' : '' }}</p>
+
+        <textarea [(ngModel)]="commentaireNotation" rows="4"
+                  placeholder="Partagez votre expérience..."></textarea>
+
+        <div class="success-msg" *ngIf="notationSuccess">{{ notationSuccess }}</div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-cancel" (click)="fermerNotation()">Annuler</button>
+        <button class="btn-primary-action" (click)="soumettreNotation()">
+          <i class="fas fa-paper-plane"></i> Envoyer mon avis
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

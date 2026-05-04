@@ -1,0 +1,123 @@
+<div class="rdv-client-page">
+  <div class="page-header">
+    <h2><i class="fas fa-calendar-alt"></i> Mes Rendez-vous</h2>
+    <button class="btn-new-rdv" (click)="showForm = !showForm">
+      <i class="fas" [class.fa-plus]="!showForm" [class.fa-times]="showForm"></i>
+      {{ showForm ? 'Annuler' : 'Demander un rendez-vous' }}
+    </button>
+  </div>
+
+  <!-- Alerts -->
+  <div class="alert alert-success" *ngIf="successMsg">
+    <i class="fas fa-check-circle"></i> {{ successMsg }}
+  </div>
+  <div class="alert alert-error" *ngIf="errorMsg">
+    <i class="fas fa-exclamation-circle"></i> {{ errorMsg }}
+  </div>
+
+  <!-- Formulaire demande RDV -->
+  <div class="rdv-form-card" *ngIf="showForm">
+    <h3><i class="fas fa-plus-circle"></i> Nouvelle demande de rendez-vous</h3>
+    <form [formGroup]="rdvForm" (ngSubmit)="submitRdv()">
+      <div class="form-row">
+        <div class="form-group">
+          <label>Service souhaité *</label>
+          <select formControlName="serviceChoisi" class="form-control">
+            <option value="">Choisir un service...</option>
+            <option *ngFor="let s of services" [value]="s">{{ s }}</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Date souhaitée *</label>
+          <input type="datetime-local" formControlName="dateRendezVous" class="form-control" />
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Message / Précisions *</label>
+        <textarea formControlName="message" class="form-control" rows="4"
+          placeholder="Décrivez l'objet du rendez-vous..."></textarea>
+      </div>
+      <div class="form-actions">
+        <button type="submit" class="btn-submit" [disabled]="rdvForm.invalid || submitting">
+          <i class="fas" [class.fa-paper-plane]="!submitting" [class.fa-spinner]="submitting"
+             [class.fa-spin]="submitting"></i>
+          {{ submitting ? 'Envoi...' : 'Envoyer la demande' }}
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Loading -->
+  <div *ngIf="loading" class="loading-state">
+    <div class="spinner"></div>
+    <span>Chargement...</span>
+  </div>
+
+  <!-- Aucun RDV -->
+  <div *ngIf="!loading && mesRendezVous.length === 0 && mesCrmRdv.length === 0 && !showForm" class="empty-state">
+    <i class="fas fa-calendar-times"></i>
+    <p>Vous n'avez aucun rendez-vous pour le moment.</p>
+    <button class="btn-new-rdv" (click)="showForm = true">
+      <i class="fas fa-plus"></i> Demander un rendez-vous
+    </button>
+  </div>
+
+  <!-- RDV planifiés par le consultant -->
+  <div class="rdv-list" *ngIf="!loading && mesCrmRdv.length > 0">
+    <h3 class="rdv-section-title"><i class="fas fa-user-tie"></i> Rendez-vous planifiés par votre consultant</h3>
+    <div class="rdv-card rdv-card-consultant" *ngFor="let rdv of mesCrmRdv">
+      <div class="rdv-card-header">
+        <div class="rdv-service">
+          <i class="fas fa-briefcase"></i>
+          {{ rdv.titre }}
+        </div>
+        <span class="rdv-statut" [class]="getCrmStatutClass(rdv.statut)">
+          {{ getCrmStatutLabel(rdv.statut) }}
+        </span>
+      </div>
+      <div class="rdv-card-body">
+        <div class="rdv-detail" *ngIf="rdv.dateHeure">
+          <i class="fas fa-calendar-check"></i>
+          <span>{{ rdv.dateHeure | date:'dd/MM/yyyy HH:mm' }}</span>
+        </div>
+        <div class="rdv-detail" *ngIf="rdv.lieu">
+          <i class="fas fa-map-marker-alt"></i>
+          <span>{{ rdv.lieu }}</span>
+        </div>
+        <div class="rdv-detail" *ngIf="rdv.dureeMinutes">
+          <i class="fas fa-clock"></i>
+          <span>Durée : {{ rdv.dureeMinutes }} min</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Liste RDV -->
+  <div class="rdv-list" *ngIf="!loading && mesRendezVous.length > 0">
+    <div class="rdv-card" *ngFor="let rdv of mesRendezVous">
+      <div class="rdv-card-header">
+        <div class="rdv-service">
+          <i class="fas fa-briefcase"></i>
+          {{ rdv.serviceChoisi }}
+        </div>
+        <span class="rdv-statut" [class]="getStatutClass(rdv.statut)">
+          {{ getStatutLabel(rdv.statut) }}
+        </span>
+      </div>
+      <div class="rdv-card-body">
+        <div class="rdv-detail" *ngIf="rdv.dateRendezVous">
+          <i class="fas fa-calendar-check"></i>
+          <span>{{ rdv.dateRendezVous | date:'dd/MM/yyyy HH:mm' }}</span>
+        </div>
+        <div class="rdv-detail" *ngIf="rdv.message">
+          <i class="fas fa-comment-alt"></i>
+          <span>{{ rdv.message }}</span>
+        </div>
+        <div class="rdv-detail rdv-date-created">
+          <i class="fas fa-clock"></i>
+          <span>Demandé le {{ rdv.dateCreation | date:'dd/MM/yyyy' }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

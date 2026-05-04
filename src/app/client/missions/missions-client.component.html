@@ -1,0 +1,119 @@
+<div class="page-container">
+  <div class="page-header">
+    <div class="header-content">
+      <h2><i class="fas fa-rocket"></i> Mes Missions</h2>
+      <p class="page-subtitle">Suivez l'avancement en temps réel de vos missions en cours</p>
+    </div>
+  </div>
+
+  <div *ngIf="loading" class="loading-state"><div class="spinner"></div></div>
+
+  <div class="missions-list" *ngIf="!loading && missions.length > 0">
+    <div class="mission-card" *ngFor="let mission of missions">
+      <div class="mission-header">
+        <div class="mission-title">
+          <h3>{{ mission.titre }}</h3>
+          <span class="mission-service">{{ mission.service }}</span>
+        </div>
+        <div class="mission-status-badge" [ngClass]="mission.statut?.toLowerCase()">
+          {{ getMissionStatut(mission.statut) }}
+        </div>
+      </div>
+      
+      <p class="mission-desc">{{ mission.description }}</p>
+
+      <div class="mission-progress">
+        <div class="progress-info">
+          <span>Avancement global</span>
+          <strong>{{ mission.progression }}%</strong>
+        </div>
+        <div class="progress-bar">
+          <div class="progress-fill" [style.width]="mission.progression + '%'"></div>
+        </div>
+      </div>
+
+      <div class="phases-timeline">
+        <div class="phase-item" *ngFor="let phase of mission.phasesDetails" [ngClass]="getStatutClass(phase.statut)">
+          <div class="phase-icon">
+            <i class="fas fa-check" *ngIf="phase.statut === 'TERMINE'"></i>
+            <i class="fas fa-sync fa-spin" *ngIf="phase.statut === 'EN_COURS'"></i>
+            <span *ngIf="phase.statut === 'A_VENIR'">{{ phase.numero }}</span>
+          </div>
+          <div class="phase-details">
+            <div class="phase-title">{{ phase.titre }}</div>
+            <div class="phase-status">
+              {{ phase.statut === 'TERMINE' ? 'Terminé' : (phase.statut === 'EN_COURS' ? 'En cours' : 'À venir') }}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Avis client existant -->
+      <div class="avis-section" *ngIf="mission.commentaireClient">
+        <div class="avis-title"><i class="fas fa-star"></i> Mon avis</div>
+        <div class="avis-stars">
+          <i class="fas fa-star" *ngFor="let s of [1,2,3,4,5]"
+             [style.color]="s <= mission.noteClient ? '#C4952A' : 'rgba(255,255,255,0.15)'"></i>
+        </div>
+        <p class="avis-text">{{ mission.commentaireClient }}</p>
+        <button class="btn-avis-modifier" (click)="openAvis(mission)">
+          <i class="fas fa-edit"></i> Modifier mon avis
+        </button>
+      </div>
+
+      <div class="avis-cta" *ngIf="!mission.commentaireClient">
+        <button class="btn-avis" (click)="openAvis(mission)">
+          <i class="fas fa-star"></i> Laisser un avis sur cette mission
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="empty-state" *ngIf="!loading && missions.length === 0">
+    <i class="fas fa-rocket"></i>
+    <h3>Aucune mission active</h3>
+    <p>Vous n'avez pas de mission en cours pour le moment.</p>
+  </div>
+</div>
+
+<!-- Modal Avis -->
+<div class="avis-modal-overlay" *ngIf="showAvisModal" (click)="closeAvis()">
+  <div class="avis-modal" (click)="$event.stopPropagation()">
+    <div class="avis-modal-header">
+      <h3><i class="fas fa-star"></i> Laisser un avis</h3>
+      <button type="button" class="avis-modal-close" (click)="closeAvis()">✕</button>
+    </div>
+    <div class="avis-modal-body">
+      <p class="avis-mission-name">{{ missionAvis?.titre }}</p>
+
+      <div class="avis-stars-input">
+        <span class="avis-label">Note :</span>
+        <div class="stars-row">
+          <i class="fas fa-star star-btn" *ngFor="let s of [1,2,3,4,5]"
+             (click)="setNote(s)"
+             [style.color]="s <= avisNote ? '#C4952A' : 'rgba(255,255,255,0.2)'"></i>
+        </div>
+        <span class="avis-note-label">{{ avisNote > 0 ? avisNote + '/5' : 'Cliquez pour noter' }}</span>
+      </div>
+
+      <div class="avis-comment-group">
+        <label>Votre commentaire *</label>
+        <textarea [(ngModel)]="avisCommentaire" rows="4"
+          placeholder="Décrivez votre expérience avec cette mission..."></textarea>
+      </div>
+
+      <div class="avis-success" *ngIf="avisSuccess">
+        <i class="fas fa-check-circle"></i> {{ avisSuccess }}
+      </div>
+    </div>
+    <div class="avis-modal-footer">
+      <button type="button" class="btn-avis-cancel" (click)="closeAvis()">Annuler</button>
+      <button type="button" class="btn-avis-submit"
+        [disabled]="!avisCommentaire || !avisNote || avisSaving"
+        (click)="submitAvis()">
+        <i class="fas" [ngClass]="avisSaving ? 'fa-spinner fa-spin' : 'fa-paper-plane'"></i>
+        {{ avisSaving ? 'Envoi...' : 'Envoyer mon avis' }}
+      </button>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,60 @@
+
+<nav class="navbar" [class.scrolled]="isScrolled">
+  <div class="navbar-container">
+    <a class="navbar-logo" (click)="scrollTo('hero')">
+      <span class="logo-text">SYNEXA</span>
+    </a>
+
+    <ul class="nav-menu" [class.active]="isMobileMenuOpen">
+      <li class="nav-item">
+        <a class="nav-link" (click)="scrollTo('hero')">{{ 'navbar.home' | translate }}</a>
+      </li>
+      <li class="nav-item has-dropdown">
+        <a class="nav-link">{{ 'navbar.services' | translate }} <i class="fas fa-chevron-down chevron"></i></a>
+        <ul class="dropdown-menu">
+          <li><a class="dropdown-item" routerLink="/services/conseil">Conseil &amp; Management</a></li>
+          <li><a class="dropdown-item" routerLink="/services/tech-ia">Tech &amp; Intelligence Artificielle</a></li>
+          <li><a class="dropdown-item" routerLink="/services/expertise">Expertise</a></li>
+          <li><a class="dropdown-item" routerLink="/services/formation">Formation</a></li>
+        </ul>
+      </li>
+      <li class="nav-item has-dropdown">
+        <a class="nav-link">{{ 'navbar.insights' | translate }} <i class="fas fa-chevron-down chevron"></i></a>
+        <ul class="dropdown-menu">
+          <li><a class="dropdown-item" routerLink="/insights" [queryParams]="{ tab: 'BLOG' }">Blog</a></li>
+          <li><a class="dropdown-item" routerLink="/insights" [queryParams]="{ tab: 'ETUDE_CAS' }">Études de Cas</a></li>
+        </ul>
+      </li>
+      <li class="nav-item has-dropdown">
+        <a class="nav-link">{{ 'navbar.agency' | translate }} <i class="fas fa-chevron-down chevron"></i></a>
+        <ul class="dropdown-menu">
+          <li><a class="dropdown-item" routerLink="/agence">Notre Agence</a></li>
+          <li><a class="dropdown-item" routerLink="/about">À propos</a></li>
+        </ul>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" routerLink="/contact">Contact</a>
+      </li>
+
+      <!-- Language Selector -->
+      <li class="nav-item lang-selector">
+        <select class="lang-select" [value]="currentLang" (change)="switchLanguage($any($event).target.value)">
+          <option value="fr">FR</option>
+          <option value="en">EN</option>
+          <option value="ar">AR</option>
+        </select>
+      </li>
+
+      <li class="nav-item nav-btn-item">
+        <a class="nav-cta btn-espace-client" routerLink="/login">
+          <i class="fas fa-user-circle"></i> {{ 'navbar.espaceClient' | translate }}
+        </a>
+      </li>
+    </ul>
+
+    <button type="button" class="hamburger" (click)="toggleMobileMenu()" aria-label="Menu">
+      <i [class]="isMobileMenuOpen ? 'fas fa-times' : 'fas fa-bars'"></i>
+      <span class="sr-only">Menu</span>
+    </button>
+  </div>
+</nav>

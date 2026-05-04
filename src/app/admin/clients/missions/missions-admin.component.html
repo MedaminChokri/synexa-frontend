@@ -1,0 +1,242 @@
+<div class="missions-page">
+
+  <!-- Header -->
+  <div class="page-header">
+    <div>
+      <h2 class="page-title"><i class="fas fa-rocket"></i> Missions Clients</h2>
+      <p class="page-subtitle">Créez et suivez l'avancement des projets clients</p>
+    </div>
+    <button type="button" class="btn-create" (click)="openCreateModal()">
+      <i class="fas fa-plus"></i> Nouvelle Mission
+    </button>
+  </div>
+
+  <!-- Alerts -->
+  <div class="alert alert-success" *ngIf="successMessage">
+    <i class="fas fa-check-circle"></i> {{ successMessage }}
+  </div>
+  <div class="alert alert-error" *ngIf="errorMessage">
+    <i class="fas fa-exclamation-circle"></i> {{ errorMessage }}
+  </div>
+
+  <!-- Loading -->
+  <div class="loading-state" *ngIf="loading">
+    <div class="spinner"></div>
+    <span>Chargement des missions...</span>
+  </div>
+
+  <!-- Missions grid -->
+  <div class="missions-grid" *ngIf="!loading && missions.length > 0">
+    <div class="mission-card" *ngFor="let mission of missions">
+
+      <!-- Card header -->
+      <div class="mission-card-header">
+        <div class="mission-info">
+          <h3 class="mission-titre">{{ mission.titre }}</h3>
+          <span class="mission-client">
+            <i class="fas fa-user"></i>
+            {{ getClientNom(mission.client) }}
+            <span *ngIf="mission.client?.entreprise" class="mission-entreprise"> · {{ mission.client.entreprise }}</span>
+          </span>
+          <span class="mission-service" *ngIf="mission.service">
+            <i class="fas fa-cog"></i> {{ mission.service }}
+          </span>
+        </div>
+        <span class="statut-badge" [ngClass]="getMissionStatutClass(mission.statut)">
+          {{ getStatutLabel(mission.statut) }}
+        </span>
+      </div>
+
+      <!-- Progress -->
+      <div class="mission-progress">
+        <div class="progress-labels">
+          <span>Avancement</span>
+          <strong>{{ mission.progression || 0 }}%</strong>
+        </div>
+        <div class="progress-track">
+          <div class="progress-fill" [style.width.%]="mission.progression || 0"></div>
+        </div>
+      </div>
+
+      <!-- Dates -->
+      <div class="mission-dates" *ngIf="mission.dateDebut || mission.dateFinPrevue">
+        <span *ngIf="mission.dateDebut"><i class="fas fa-play"></i> {{ formatDate(mission.dateDebut) }}</span>
+        <span *ngIf="mission.dateFinPrevue"><i class="fas fa-flag-checkered"></i> {{ formatDate(mission.dateFinPrevue) }}</span>
+      </div>
+
+      <!-- Phases -->
+      <div class="phases-section" *ngIf="mission.phasesDetails?.length > 0">
+        <div class="phases-header">
+          <i class="fas fa-layer-group"></i> Phases
+          <span class="phases-count">{{ mission.phaseActuelle }}/{{ mission.phasesTotales }}</span>
+        </div>
+        <div class="phase-row" *ngFor="let phase of mission.phasesDetails">
+          <div class="phase-left">
+            <div class="phase-num">{{ phase.numero }}</div>
+            <span class="phase-titre">{{ phase.titre }}</span>
+          </div>
+          <div class="phase-right">
+            <span class="phase-badge" [ngClass]="getPhaseStatutClass(phase.statut)">
+              {{ getPhaseLabel(phase.statut) }}
+            </span>
+            <button class="btn-edit-phase" (click)="openPhaseModal(mission, phase)" title="Modifier le statut">
+              <i class="fas fa-edit"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Empty -->
+  <div class="empty-state" *ngIf="!loading && missions.length === 0">
+    <i class="fas fa-rocket"></i>
+    <p>Aucune mission créée</p>
+    <button type="button" class="btn-create" (click)="openCreateModal()">
+      <i class="fas fa-plus"></i> Créer la première mission
+    </button>
+  </div>
+
+</div>
+
+<!-- ═══ Modal Créer Mission ═══ -->
+<div class="modal-overlay" *ngIf="showCreateModal" (click)="closeCreateModal()">
+  <div class="modal modal-large" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3><i class="fas fa-rocket"></i> Nouvelle Mission</h3>
+      <button class="modal-close" (click)="closeCreateModal()">✕</button>
+    </div>
+    <div class="modal-body">
+
+      <!-- Client -->
+      <div class="form-row">
+        <div class="form-group full-width">
+          <label>Client <span class="required">*</span></label>
+          <select class="form-control" [(ngModel)]="newMission.clientId">
+            <option [value]="null">-- Sélectionner un client --</option>
+            <option *ngFor="let c of clients" [value]="c.id">
+              {{ getClientNom(c) }}{{ c.entreprise ? ' — ' + c.entreprise : '' }}
+            </option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Titre + Service -->
+      <div class="form-row">
+        <div class="form-group">
+          <label>Titre de la mission <span class="required">*</span></label>
+          <input type="text" class="form-control" [(ngModel)]="newMission.titre"
+                 placeholder="Ex: Transformation Digitale Phase 2">
+        </div>
+        <div class="form-group">
+          <label>Service / Domaine</label>
+          <input type="text" class="form-control" [(ngModel)]="newMission.service"
+                 placeholder="Ex: Conseil IT, Audit, Formation...">
+        </div>
+      </div>
+
+      <!-- Description -->
+      <div class="form-row">
+        <div class="form-group full-width">
+          <label>Description</label>
+          <textarea class="form-control" [(ngModel)]="newMission.description" rows="3"
+                    placeholder="Décrivez les objectifs et le périmètre de la mission..."></textarea>
+        </div>
+      </div>
+
+      <!-- Dates + Statut -->
+      <div class="form-row">
+        <div class="form-group">
+          <label>Date de début</label>
+          <input type="date" class="form-control" [(ngModel)]="newMission.dateDebut">
+        </div>
+        <div class="form-group">
+          <label>Date de fin prévue</label>
+          <input type="date" class="form-control" [(ngModel)]="newMission.dateFinPrevue">
+        </div>
+        <div class="form-group">
+          <label>Statut initial</label>
+          <select class="form-control" [(ngModel)]="newMission.statut">
+            <option value="EN_COURS">En cours</option>
+            <option value="SUSPENDUE">Suspendue</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Phases count -->
+      <div class="form-row">
+        <div class="form-group">
+          <label>Nombre de phases</label>
+          <select class="form-control" [(ngModel)]="newMission.phasesTotales" (ngModelChange)="onPhasesCountChange()">
+            <option [value]="2">2 phases</option>
+            <option [value]="3">3 phases</option>
+            <option [value]="4">4 phases</option>
+            <option [value]="5">5 phases</option>
+            <option [value]="6">6 phases</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Phases definition -->
+      <div class="phases-definition">
+        <div class="phases-def-header">
+          <i class="fas fa-layer-group"></i> Définition des phases
+        </div>
+        <div class="phase-def-row" *ngFor="let phase of phases; let i = index">
+          <div class="phase-def-num">{{ i + 1 }}</div>
+          <input type="text" class="form-control" [(ngModel)]="phase.titre"
+                 [placeholder]="'Titre de la phase ' + (i + 1)">
+          <select class="form-control phase-statut-sel" [(ngModel)]="phase.statut">
+            <option value="A_VENIR">À venir</option>
+            <option value="EN_COURS">En cours</option>
+            <option value="TERMINE">Terminée</option>
+          </select>
+        </div>
+      </div>
+
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-cancel" (click)="closeCreateModal()">Annuler</button>
+      <button class="btn btn-primary" (click)="creerMission()"
+              [disabled]="saving || !newMission.clientId || !newMission.titre">
+        <i class="fas" [class.fa-check]="!saving" [class.fa-spinner]="saving" [class.fa-spin]="saving"></i>
+        {{ saving ? 'Création...' : 'Créer la mission' }}
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ Modal Mise à jour Phase ═══ -->
+<div class="modal-overlay" *ngIf="showPhaseModal" (click)="closePhaseModal()">
+  <div class="modal modal-small" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h3><i class="fas fa-edit"></i> Mettre à jour la phase {{ phaseSelected?.numero }}</h3>
+      <button class="modal-close" (click)="closePhaseModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="info-box">
+        <span class="info-label">Mission</span>
+        <span class="info-value">{{ missionSelected?.titre }}</span>
+      </div>
+      <div class="info-box">
+        <span class="info-label">Phase</span>
+        <span class="info-value">{{ phaseSelected?.titre }}</span>
+      </div>
+      <div class="form-group form-group-top-gap">
+        <label>Nouveau statut</label>
+        <select class="form-control" [(ngModel)]="nouveauStatutPhase">
+          <option value="A_VENIR">À venir</option>
+          <option value="EN_COURS">En cours</option>
+          <option value="TERMINE">Terminée</option>
+        </select>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-cancel" (click)="closePhaseModal()">Annuler</button>
+      <button class="btn btn-primary" (click)="updatePhaseStatut()">
+        <i class="fas fa-check"></i> Enregistrer
+      </button>
+    </div>
+  </div>
+</div>

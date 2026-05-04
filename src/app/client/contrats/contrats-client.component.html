@@ -1,0 +1,92 @@
+<div class="page-container">
+  <div class="page-header">
+    <div class="header-content">
+      <h2><i class="fas fa-file-contract"></i> Mes Contrats</h2>
+      <p class="page-subtitle">Consultez et signez vos contrats de manière électronique et sécurisée</p>
+    </div>
+  </div>
+
+  <div *ngIf="loading" class="loading-state"><div class="spinner"></div></div>
+
+  <div class="contrats-grid" *ngIf="!loading && contrats.length > 0">
+    <div class="contrat-card" *ngFor="let contrat of contrats">
+      <div class="contrat-header">
+        <div class="contrat-icon"><i class="fas fa-file-signature"></i></div>
+        <div class="contrat-title">
+          <h3>{{ contrat.titre }}</h3>
+          <span class="contrat-date">{{ contrat.dateCreation | date:'dd/MM/yyyy' }}</span>
+        </div>
+        <div class="contrat-status" [ngClass]="contrat.statut?.toLowerCase()">
+          {{ contrat.statut === 'SIGNE' ? 'Signé' : (contrat.statut === 'EN_ATTENTE' ? 'À signer' : contrat.statut) }}
+        </div>
+      </div>
+      
+      <div class="contrat-body">
+        <p>{{ contrat.description || 'Contrat généré et prêt pour la signature électronique.' }}</p>
+      </div>
+
+      <div class="contrat-actions">
+        <!-- Contrat en attente de signature -->
+        <ng-container *ngIf="contrat.statut === 'EN_ATTENTE'">
+          <button class="btn-outline" (click)="downloadPDF(contrat.id, true)">
+            <i class="fas fa-eye"></i> Consulter l'original
+          </button>
+          <button class="btn-primary btn-sign" (click)="openSignature(contrat)">
+            <i class="fas fa-pen"></i> Signer le contrat
+          </button>
+        </ng-container>
+
+        <!-- Contrat signé -->
+        <ng-container *ngIf="contrat.statut === 'SIGNE'">
+          <div class="signature-info">
+            <i class="fas fa-check-circle" style="color: #10b981;"></i> Signé le {{ contrat.dateSignature | date:'dd/MM/yyyy à HH:mm' }}
+          </div>
+          <button class="btn-primary" (click)="downloadPDF(contrat.id, false)">
+            <i class="fas fa-download"></i> Télécharger contrat signé
+          </button>
+        </ng-container>
+      </div>
+    </div>
+  </div>
+
+  <div class="empty-state" *ngIf="!loading && contrats.length === 0">
+    <i class="fas fa-file-contract"></i>
+    <h3>Aucun contrat</h3>
+    <p>Vous n'avez pas de document contractuel pour le moment.</p>
+  </div>
+</div>
+
+<!-- Modal de Signature Électronique -->
+<div class="modal-overlay" *ngIf="showSignatureModal">
+  <div class="modal modal-lg">
+    <div class="modal-header">
+      <h3>Signature Électronique</h3>
+      <button class="btn-close" (click)="closeSignature()"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="modal-body">
+      <div class="signature-notice">
+        <i class="fas fa-info-circle"></i>
+        <p>En signant ce document, vous acceptez les termes et conditions du contrat <strong>{{ contratEnCours?.titre }}</strong>. Votre signature électronique a la même valeur légale qu'une signature manuscrite.</p>
+      </div>
+      
+      <div class="canvas-container">
+        <label>Dessinez votre signature ci-dessous :</label>
+        <canvas #signatureCanvas width="600" height="200"
+                (mousedown)="startDrawing($event)"
+                (mousemove)="draw($event)"
+                (mouseup)="stopDrawing()"
+                (mouseleave)="stopDrawing()"
+                (touchstart)="startDrawing($event)"
+                (touchmove)="draw($event)"
+                (touchend)="stopDrawing()"></canvas>
+        <button class="btn-clear" (click)="clearSignature()"><i class="fas fa-eraser"></i> Effacer</button>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-cancel" (click)="closeSignature()" [disabled]="signatureLoading">Annuler</button>
+      <button class="btn-success" (click)="validerSignature()" [disabled]="signatureLoading">
+        <i class="fas" [ngClass]="signatureLoading ? 'fa-spinner fa-spin' : 'fa-check'"></i> Confirmer la signature
+      </button>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,128 @@
+
+<section class="contact-section" id="contact">
+  <div class="container">
+    <h2 class="section-title">Contactez-<span class="text-gradient">Nous</span></h2>
+    <p class="section-subtitle">Discutons de votre projet et transformons vos idées en réalité</p>
+
+    <div class="contact-grid">
+      <!-- Infos Contact -->
+      <div class="contact-info animate-on-scroll">
+        <h3 class="info-title">Parlons de votre projet</h3>
+        <p class="info-text">
+          SYNEXA Consult - Votre partenaire en conseil stratégique et management.
+          N'hésitez pas à nous contacter pour un devis gratuit.
+        </p>
+
+        <div class="info-items">
+          <div class="info-item">
+            <div class="info-icon">
+              <i class="fas fa-map-marker-alt"></i>
+            </div>
+            <div>
+              <h4>Adresse</h4>
+              <p>Tunis, Tunisie</p>
+            </div>
+          </div>
+          <div class="info-item">
+            <div class="info-icon">
+              <i class="fas fa-envelope"></i>
+            </div>
+            <div>
+              <h4>Email</h4>
+              <p>contact&#64;synexa-consult.com</p>
+            </div>
+          </div>
+          <div class="info-item">
+            <div class="info-icon">
+              <i class="fas fa-phone"></i>
+            </div>
+            <div>
+              <h4>Téléphone</h4>
+              <p>+216 XX XXX XXX</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="info-socials">
+          <a class="social-btn"><i class="fab fa-facebook-f"></i></a>
+          <a class="social-btn"><i class="fab fa-linkedin-in"></i></a>
+          <a class="social-btn"><i class="fab fa-instagram"></i></a>
+          <a class="social-btn"><i class="fab fa-twitter"></i></a>
+        </div>
+      </div>
+
+      <!-- Formulaire -->
+      <form [formGroup]="contactForm" (ngSubmit)="onSubmit()" class="contact-form glass-card animate-on-scroll">
+        <div class="form-group">
+          <label for="nom">Nom complet *</label>
+          <input type="text" id="nom" formControlName="nom" placeholder="Votre nom complet">
+          <div class="field-error" *ngIf="f['nom'].invalid && f['nom'].touched">
+            Le nom est requis.
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="email">Adresse email *</label>
+          <input type="email" id="email" formControlName="email" placeholder="votre@email.com">
+          <div class="field-error" *ngIf="f['email'].invalid && f['email'].touched">
+            <span *ngIf="f['email'].errors?.['required']">L'email est requis.</span>
+            <span *ngIf="f['email'].errors?.['email']">L'email n'est pas valide.</span>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="telephone">Téléphone</label>
+          <input type="tel" id="telephone" formControlName="telephone" placeholder="+216 XX XXX XXX">
+        </div>
+
+        <div class="form-group">
+          <label for="serviceChoisi">Service souhaité *</label>
+          <select id="serviceChoisi" formControlName="serviceChoisi" class="form-select">
+            <option value="">Sélectionnez un service</option>
+            <option *ngFor="let s of servicesList" [value]="s">{{ s }}</option>
+          </select>
+          <div class="field-error" *ngIf="f['serviceChoisi'].invalid && f['serviceChoisi'].touched">
+            Veuillez sélectionner un service.
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="dateRendezVous">Date de rendez-vous optionnelle</label>
+          <input type="datetime-local" id="dateRendezVous" formControlName="dateRendezVous" class="form-control">
+        </div>
+
+        <div class="form-group">
+          <label for="message">Message *</label>
+          <textarea id="message" formControlName="message" placeholder="Décrivez votre projet..." rows="4"></textarea>
+          <div class="field-error" *ngIf="f['message'].invalid && f['message'].touched">
+            <span *ngIf="f['message'].errors?.['required']">Le message est requis.</span>
+            <span *ngIf="f['message'].errors?.['minlength']">Le message doit contenir au moins 10 caractères.</span>
+          </div>
+        </div>
+
+        <div class="form-check mb-4">
+          <input class="form-check-input" type="checkbox" id="acceptRecontact" formControlName="acceptRecontact">
+          <label class="form-check-label text-white opacity-75 small" for="acceptRecontact">
+            J'accepte d'être recontacté par l'équipe SYNEXA.
+          </label>
+          <div class="field-error" *ngIf="f['acceptRecontact'].invalid && f['acceptRecontact'].touched">
+            Vous devez accepter d'être recontacté.
+          </div>
+        </div>
+
+        <div *ngIf="success" class="alert alert-success animate-fade-in mb-4">
+          Votre message a bien été envoyé nous vous contactons dans les plus brefs délais
+        </div>
+
+        <div *ngIf="error" class="alert alert-danger animate-fade-in mb-4">
+          Une erreur est survenue veuillez réessayer.
+        </div>
+
+        <button type="submit" class="btn-primary submit-btn" [disabled]="submitting || contactForm.invalid">
+          <span *ngIf="submitting" class="spinner-border spinner-border-sm me-2"></span>
+          {{ submitting ? 'Envoi...' : 'Envoyer le message' }}
+        </button>
+      </form>
+    </div>
+  </div>
+</section>
