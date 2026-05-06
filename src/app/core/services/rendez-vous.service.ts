@@ -25,4 +25,12 @@ export class RendezVousService {
   delete(id: number): Observable<ApiResponse<void>> {
     return this.apiService.delete<void>(`rendezvous/${id}`);
   }
+
+  annulerParClient(id: number, motif: string): Observable<ApiResponse<RendezVous>> {
+    return this.apiService.put<RendezVous>(`rendezvous/${id}/annuler`, { motif });
+  }
+
+  reprogrammerParClient(id: number, nouvelleDate: string): Observable<ApiResponse<RendezVous>> {
+    return this.apiService.put<RendezVous>(`rendezvous/${id}/reprogrammer`, { nouvelleDate });
+  }
 }

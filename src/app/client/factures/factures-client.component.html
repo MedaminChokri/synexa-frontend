@@ -38,6 +38,14 @@
     </div>
   </div>
 
+  <!-- Alertes paiement -->
+  <div class="payment-alert payment-success" *ngIf="paymentMessage">
+    <i class="fas fa-check-circle"></i> {{ paymentMessage }}
+  </div>
+  <div class="payment-alert payment-error" *ngIf="paymentError">
+    <i class="fas fa-exclamation-circle"></i> {{ paymentError }}
+  </div>
+
   <!-- Loading -->
   <div *ngIf="loading" class="loading"><div class="spinner"></div></div>
 
@@ -54,7 +62,7 @@
           <th>Date émission</th>
           <th>Échéance</th>
           <th>Statut</th>
-          <th>PDF</th>
+          <th>Actions</th>
         </tr>
       </thead>
       <tbody>
@@ -78,11 +86,19 @@
               {{ getStatutLabel(f.statut) }}
             </span>
           </td>
-          <td>
+          <td class="actions-cell">
             <button type="button" class="btn-pdf"
                     (click)="telechargerPdf(f)"
                     title="Télécharger le PDF">
               <i class="fas fa-download"></i>
+            </button>
+            <button type="button" class="btn-pay"
+                    *ngIf="f.statut === 'EN_ATTENTE' || f.statut === 'EN_RETARD'"
+                    [disabled]="paying === f.id"
+                    (click)="payerFacture(f)"
+                    title="Payer en ligne">
+              <i class="fas" [class.fa-credit-card]="paying !== f.id" [class.fa-spinner]="paying === f.id" [class.fa-spin]="paying === f.id"></i>
+              <span>{{ paying === f.id ? 'Redirection…' : 'Payer' }}</span>
             </button>
           </td>
         </tr>

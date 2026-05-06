@@ -1,19 +1,18 @@
 import { Component, OnInit, OnDestroy, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router, NavigationEnd } from '@angular/router';
+import { TranslateModule } from '@ngx-translate/core';
 import { filter } from 'rxjs/operators';
 import { Subscription, interval } from 'rxjs';
 import { ClientService } from '../../core/services/client.service';
 import { NotificationService } from '../../core/services/notification.service';
 import { MessageService } from '../../core/services/message.service';
+import { LanguageService, AppLang } from '../../core/services/language.service';
 
-/**
- * Layout principal de l'espace client avec sidebar complète (toutes les améliorations).
- */
 @Component({
   selector: 'app-espace-client-layout',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, TranslateModule],
   templateUrl: './espace-client-layout.component.html',
   styleUrls: ['./espace-client-layout.component.css']
 })
@@ -25,6 +24,7 @@ export class EspaceClientLayoutComponent implements OnInit, OnDestroy {
   notifNonLues = 0;
   messagesNonLus = 0;
   notifOpen = false;
+  sidebarOpen = false;
   dernieresNotifs: any[] = [];
 
   private subs = new Subscription();
@@ -33,8 +33,17 @@ export class EspaceClientLayoutComponent implements OnInit, OnDestroy {
     private clientService: ClientService,
     private notifService: NotificationService,
     private messageService: MessageService,
-    private router: Router
+    private router: Router,
+    private languageService: LanguageService
   ) {}
+
+  get currentLang(): AppLang {
+    return this.languageService.currentLang;
+  }
+
+  setLang(lang: AppLang): void {
+    this.languageService.use(lang);
+  }
 
   ngOnInit(): void {
     this.clientName = this.clientService.getClientName();
@@ -48,18 +57,17 @@ export class EspaceClientLayoutComponent implements OnInit, OnDestroy {
       }
     }
 
-    // Surveiller la route active
     this.subs.add(
       this.router.events.pipe(filter(e => e instanceof NavigationEnd)).subscribe((e: any) => {
         this.activeRoute = e.urlAfterRedirects;
+        // Ferme automatiquement la sidebar mobile après chaque navigation
+        this.sidebarOpen = false;
       })
     );
     this.activeRoute = this.router.url;
 
-    // Charger les badges
     this.chargerBadges();
 
-    // Actualiser les badges toutes les 30 secondes
     this.subs.add(
       interval(30000).subscribe(() => this.chargerBadges())
     );
@@ -94,6 +102,14 @@ export class EspaceClientLayoutComponent implements OnInit, OnDestroy {
 
   toggleNotifDropdown(): void {
     this.notifOpen = !this.notifOpen;
+  }
+
+  toggleSidebar(): void {
+    this.sidebarOpen = !this.sidebarOpen;
+  }
+
+  closeSidebar(): void {
+    this.sidebarOpen = false;
   }
 
   @HostListener('document:click', ['$event'])

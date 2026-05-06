@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
+import { environment } from '../../../../environments/environment';
 
 export interface JournalEntry {
   id: number;
@@ -31,7 +32,7 @@ export class JournalActiviteComponent implements OnInit {
   niveauFilter = '';
   entiteFilter = '';
 
-  private apiUrl = 'http://localhost:8080/api/journal';
+  private apiUrl = `${environment.apiUrl}/journal`;
 
   constructor(private http: HttpClient) {}
 

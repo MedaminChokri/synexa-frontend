@@ -23,6 +23,8 @@ const routes: Routes = [
   { path: 'services/formation',  component: ServicesDetailComponent, data: { categorie: 'FORMATION' } },
   { path: 'signup', component: SignupComponent },
   { path: 'verify-email', loadComponent: () => import('./auth/verify-email/verify-email.component').then(m => m.VerifyEmailComponent) },
+  { path: 'forgot-password', loadComponent: () => import('./auth/forgot-password/forgot-password.component').then(m => m.ForgotPasswordComponent) },
+  { path: 'reset-password', loadComponent: () => import('./auth/reset-password/reset-password.component').then(m => m.ResetPasswordComponent) },
   { path: 'login', component: ClientLoginComponent },
   { path: 'client-login', redirectTo: 'login', pathMatch: 'full' },
   { path: 'management', redirectTo: 'login', pathMatch: 'full' },

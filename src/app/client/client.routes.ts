@@ -9,7 +9,6 @@ export const ESPACE_CLIENT_ROUTES: Routes = [
     children: [
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
       { path: 'dashboard', component: EspaceClientComponent },
-      { path: 'mes-demandes', loadComponent: () => import('./demandes/mes-demandes.component').then(m => m.MesDemandesComponent) },
       { path: 'notifications', loadComponent: () => import('./notifications/notifications-client.component').then(m => m.NotificationsClientComponent) },
       { path: 'analytics', loadComponent: () => import('./analytics/analytics-client.component').then(m => m.AnalyticsClientComponent) },
       { path: 'missions', loadComponent: () => import('./missions/missions-client.component').then(m => m.MissionsClientComponent) },

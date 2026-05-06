@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { RendezVousService } from '../../core/services/rendez-vous.service';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-rendez-vous-client',
@@ -33,6 +34,12 @@ export class RendezVousClientComponent implements OnInit {
     'Audit & Diagnostic',
     'Autre'
   ];
+
+  // Cancel / Reschedule state
+  cancellingId: number | null = null;
+  cancelMotif = '';
+  reschedulingId: number | null = null;
+  rescheduleDate = '';
 
   constructor(
     private rdvService: RendezVousService,
@@ -76,7 +83,7 @@ export class RendezVousClientComponent implements OnInit {
 
   loadCrmRdv(): void {
     if (!this.clientEmail) return;
-    this.http.get<any>(`http://localhost:8080/api/crm/rendezvous/by-email?email=${encodeURIComponent(this.clientEmail)}`).subscribe({
+    this.http.get<any>(`${environment.apiUrl}/crm/rendezvous/by-email?email=${encodeURIComponent(this.clientEmail)}`).subscribe({
       next: (res: any) => {
         if (res.success && res.data) this.mesCrmRdv = res.data;
       },
@@ -145,5 +152,76 @@ export class RendezVousClientComponent implements OnInit {
       TERMINE: 'Terminé'
     };
     return map[statut] || statut;
+  }
+
+  // ─── Cancel ───────────────────────────────────────────
+  canCancel(rdv: any): boolean {
+    return rdv.statut === 'EN_ATTENTE' || rdv.statut === 'CONFIRME';
+  }
+
+  openCancelModal(rdv: any): void {
+    this.cancellingId = rdv.id;
+    this.cancelMotif = '';
+  }
+
+  closeCancelModal(): void {
+    this.cancellingId = null;
+  }
+
+  confirmCancel(): void {
+    if (!this.cancellingId) return;
+    this.rdvService.annulerParClient(this.cancellingId, this.cancelMotif).subscribe({
+      next: (res: any) => {
+        if (res.success) {
+          this.successMsg = 'Rendez-vous annulé.';
+          this.loadRendezVous();
+        } else {
+          this.errorMsg = res.message || 'Erreur lors de l\'annulation.';
+        }
+        this.closeCancelModal();
+      },
+      error: () => {
+        this.errorMsg = 'Erreur lors de l\'annulation.';
+        this.closeCancelModal();
+      }
+    });
+  }
+
+  // ─── Reschedule ───────────────────────────────────────
+  canReschedule(rdv: any): boolean {
+    return rdv.statut === 'EN_ATTENTE' || rdv.statut === 'CONFIRME';
+  }
+
+  openRescheduleModal(rdv: any): void {
+    this.reschedulingId = rdv.id;
+    // Pre-fill with current date
+    if (rdv.dateRendezVous) {
+      this.rescheduleDate = rdv.dateRendezVous.substring(0, 16);
+    } else {
+      this.rescheduleDate = '';
+    }
+  }
+
+  closeRescheduleModal(): void {
+    this.reschedulingId = null;
+  }
+
+  confirmReschedule(): void {
+    if (!this.reschedulingId || !this.rescheduleDate) return;
+    this.rdvService.reprogrammerParClient(this.reschedulingId, this.rescheduleDate).subscribe({
+      next: (res: any) => {
+        if (res.success) {
+          this.successMsg = 'Rendez-vous reprogrammé avec succès.';
+          this.loadRendezVous();
+        } else {
+          this.errorMsg = res.message || 'Erreur lors de la reprogrammation.';
+        }
+        this.closeRescheduleModal();
+      },
+      error: () => {
+        this.errorMsg = 'Erreur lors de la reprogrammation.';
+        this.closeRescheduleModal();
+      }
+    });
   }
 }

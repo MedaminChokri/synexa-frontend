@@ -3,13 +3,15 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router, RouterModule, ActivatedRoute } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
+import { TranslateModule } from '@ngx-translate/core';
 import { ClientService } from '../../core/services/client.service';
 import { AdminService } from '../../core/services/admin.service';
+import { LanguageService, AppLang } from '../../core/services/language.service';
 
 @Component({
   selector: 'app-client-login',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterModule],
+  imports: [CommonModule, ReactiveFormsModule, RouterModule, TranslateModule],
   templateUrl: './client-login.component.html',
   styleUrls: ['./client-login.component.css']
 })
@@ -44,7 +46,8 @@ export class ClientLoginComponent {
     private clientService: ClientService,
     private adminService: AdminService,
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private languageService: LanguageService
   ) {
     this.form = this.fb.group({
       email:      ['', [Validators.required, Validators.email]],
@@ -114,5 +117,13 @@ export class ClientLoginComponent {
 
   togglePassword(): void {
     this.showPassword = !this.showPassword;
+  }
+
+  get currentLang(): AppLang {
+    return this.languageService.currentLang;
+  }
+
+  setLang(lang: AppLang): void {
+    this.languageService.use(lang);
   }
 }

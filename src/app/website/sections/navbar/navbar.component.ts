@@ -1,6 +1,6 @@
 import { Component, HostListener } from '@angular/core';
 import { Router } from '@angular/router';
-import { TranslateService } from '@ngx-translate/core';
+import { LanguageService, AppLang } from '../../../core/services/language.service';
 
 @Component({
   selector: 'app-navbar',
@@ -10,13 +10,11 @@ import { TranslateService } from '@ngx-translate/core';
 export class NavbarComponent {
   isScrolled = false;
   isMobileMenuOpen = false;
-  currentLang = 'fr';
 
-  constructor(private router: Router, private translate: TranslateService) {
-    const savedLang = localStorage.getItem('synexa_lang') || 'fr';
-    this.currentLang = savedLang;
-    this.translate.use(savedLang);
-    this.applyDirection(savedLang);
+  constructor(private router: Router, private languageService: LanguageService) {}
+
+  get currentLang(): AppLang {
+    return this.languageService.currentLang;
   }
 
   @HostListener('window:scroll')
@@ -44,21 +42,7 @@ export class NavbarComponent {
     }
   }
 
-  switchLanguage(lang: string): void {
-    this.currentLang = lang;
-    this.translate.use(lang);
-    localStorage.setItem('synexa_lang', lang);
-    this.applyDirection(lang);
-  }
-
-  applyDirection(lang: string): void {
-    const body = document.body;
-    if (lang === 'ar') {
-      body.setAttribute('dir', 'rtl');
-      body.style.fontFamily = "'Noto Sans Arabic', 'Inter', sans-serif";
-    } else {
-      body.setAttribute('dir', 'ltr');
-      body.style.fontFamily = "'Inter', sans-serif";
-    }
+  switchLanguage(lang: AppLang): void {
+    this.languageService.use(lang);
   }
 }

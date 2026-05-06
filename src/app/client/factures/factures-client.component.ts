@@ -1,6 +1,7 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
+import { ActivatedRoute, Router } from '@angular/router';
 import { ClientService } from '../../core/services/client.service';
 import { FactureService } from '../../core/services/facture.service';
 import { environment } from '../../../environments/environment';
@@ -34,9 +35,14 @@ export class FacturesClientComponent implements OnInit {
   clientId = 0;
 
   clientInfo: any = null;
+  paying: number | null = null;
+  paymentMessage = '';
+  paymentError = '';
 
   private clientService = inject(ClientService);
   private factureService = inject(FactureService);
+  private route = inject(ActivatedRoute);
+  private router = inject(Router);
 
   constructor() {}
 
@@ -47,6 +53,56 @@ export class FacturesClientComponent implements OnInit {
       this.clientId = this.clientInfo.id;
     }
     this.loadFactures();
+    this.handleStripeReturn();
+  }
+
+  private handleStripeReturn(): void {
+    const params = this.route.snapshot.queryParamMap;
+    const status = params.get('paiement');
+    const sessionId = params.get('session_id');
+    if (status === 'success' && sessionId && this.clientId) {
+      this.factureService.confirmerPaiement(this.clientId, sessionId).subscribe({
+        next: (res: any) => {
+          this.paymentMessage = res?.success
+            ? 'Paiement confirmé. Merci !'
+            : (res?.message || 'Paiement enregistré, mise à jour en cours…');
+          this.loadFactures();
+          this.router.navigate([], { queryParams: {}, replaceUrl: true });
+          setTimeout(() => this.paymentMessage = '', 5000);
+        },
+        error: (err) => {
+          this.paymentError = err?.error?.message || 'Impossible de confirmer le paiement.';
+          this.router.navigate([], { queryParams: {}, replaceUrl: true });
+          setTimeout(() => this.paymentError = '', 6000);
+        }
+      });
+    } else if (status === 'cancel') {
+      this.paymentError = 'Paiement annulé.';
+      this.router.navigate([], { queryParams: {}, replaceUrl: true });
+      setTimeout(() => this.paymentError = '', 4000);
+    }
+  }
+
+  payerFacture(facture: Facture): void {
+    if (!this.clientId || this.paying !== null) return;
+    this.paying = facture.id;
+    this.paymentError = '';
+    this.factureService.payerStripe(this.clientId, facture.id).subscribe({
+      next: (res: any) => {
+        if (res?.success && res?.data?.url) {
+          window.location.href = res.data.url;
+        } else {
+          this.paying = null;
+          this.paymentError = res?.message || 'Paiement indisponible pour le moment.';
+          setTimeout(() => this.paymentError = '', 5000);
+        }
+      },
+      error: (err) => {
+        this.paying = null;
+        this.paymentError = err?.error?.message || 'Erreur lors de la création de la session de paiement.';
+        setTimeout(() => this.paymentError = '', 5000);
+      }
+    });
   }
 
   loadFactures(): void {

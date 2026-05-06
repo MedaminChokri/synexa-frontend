@@ -51,6 +51,17 @@ export class ClientService {
     );
   }
 
+  forgotPassword(email: string): Observable<ApiResponse<string>> {
+    return this.http.post<ApiResponse<string>>(`${this.baseUrl}/clients/forgot-password`, { email });
+  }
+
+  resetPassword(token: string, nouveauPassword: string): Observable<ApiResponse<string>> {
+    return this.http.post<ApiResponse<string>>(`${this.baseUrl}/clients/reset-password`, {
+      token,
+      nouveau_password: nouveauPassword
+    });
+  }
+
   logout(): void {
     localStorage.removeItem('clientToken');
     localStorage.removeItem('clientId');

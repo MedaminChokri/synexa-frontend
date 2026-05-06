@@ -117,7 +117,52 @@
           <i class="fas fa-clock"></i>
           <span>Demandé le {{ rdv.dateCreation | date:'dd/MM/yyyy' }}</span>
         </div>
+        <div class="rdv-detail" *ngIf="rdv.ancienneDate">
+          <i class="fas fa-history"></i>
+          <span>Ancienne date : {{ rdv.ancienneDate | date:'dd/MM/yyyy HH:mm' }}</span>
+        </div>
+      </div>
+      <!-- Client actions -->
+      <div class="rdv-card-actions" *ngIf="canCancel(rdv) || canReschedule(rdv)">
+        <button class="btn-reschedule" *ngIf="canReschedule(rdv)" (click)="openRescheduleModal(rdv)">
+          <i class="fas fa-calendar-day"></i> Reprogrammer
+        </button>
+        <button class="btn-cancel" *ngIf="canCancel(rdv)" (click)="openCancelModal(rdv)">
+          <i class="fas fa-times-circle"></i> Annuler
+        </button>
       </div>
     </div>
   </div>
+
+  <!-- Cancel Modal -->
+  <div class="modal-overlay" *ngIf="cancellingId" (click)="closeCancelModal()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <h3><i class="fas fa-times-circle"></i> Annuler ce rendez-vous ?</h3>
+      <div class="form-group">
+        <label>Motif (optionnel)</label>
+        <textarea [(ngModel)]="cancelMotif" class="form-control" rows="3"
+          placeholder="Raison de l'annulation..."></textarea>
+      </div>
+      <div class="modal-actions">
+        <button class="btn-secondary" (click)="closeCancelModal()">Retour</button>
+        <button class="btn-danger" (click)="confirmCancel()">Confirmer l'annulation</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Reschedule Modal -->
+  <div class="modal-overlay" *ngIf="reschedulingId" (click)="closeRescheduleModal()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <h3><i class="fas fa-calendar-day"></i> Reprogrammer ce rendez-vous</h3>
+      <div class="form-group">
+        <label>Nouvelle date et heure *</label>
+        <input type="datetime-local" [(ngModel)]="rescheduleDate" class="form-control" />
+      </div>
+      <div class="modal-actions">
+        <button class="btn-secondary" (click)="closeRescheduleModal()">Retour</button>
+        <button class="btn-submit" [disabled]="!rescheduleDate" (click)="confirmReschedule()">Confirmer</button>
+      </div>
+    </div>
+  </div>
+
 </div>

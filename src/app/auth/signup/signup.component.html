@@ -1,29 +1,33 @@
 <div class="auth-shell">
+  <!-- Mini language switcher -->
+  <div class="auth-lang-switcher">
+    <button type="button" [class.active]="currentLang === 'fr'" (click)="setLang('fr')">FR</button>
+    <button type="button" [class.active]="currentLang === 'en'" (click)="setLang('en')">EN</button>
+    <button type="button" [class.active]="currentLang === 'ar'" (click)="setLang('ar')">AR</button>
+  </div>
+
   <div class="auth-grid">
     <aside class="auth-left">
       <a class="brand" routerLink="/">
         <span class="brand-mark"></span>
         <span class="brand-name">SYNEXA</span>
       </a>
-      <p class="eyebrow">Enterprise onboarding</p>
-      <h1>Create your workspace and centralize your operations.</h1>
-      <p class="lead">
-        Start with a secure account to manage CRM, projects, invoicing, and client communication
-        through one scalable platform.
-      </p>
+      <p class="eyebrow">{{ 'auth.signupEyebrow' | translate }}</p>
+      <h1>{{ 'auth.signupTitle' | translate }}</h1>
+      <p class="lead">{{ 'auth.signupLead' | translate }}</p>
       <div class="benefits">
-        <article><span></span>Fast setup for B2B teams</article>
-        <article><span></span>Secure and role-based access</article>
-        <article><span></span>Integrated AI and automation tools</article>
+        <article><span></span>{{ 'auth.signupBenefit1' | translate }}</article>
+        <article><span></span>{{ 'auth.signupBenefit2' | translate }}</article>
+        <article><span></span>{{ 'auth.signupBenefit3' | translate }}</article>
       </div>
-      <a routerLink="/" class="back-link">Back to website</a>
+      <a routerLink="/" class="back-link">{{ 'auth.backToWebsite' | translate }}</a>
     </aside>
 
     <section class="auth-right">
       <div class="form-card">
-        <p class="form-kicker">Get started</p>
-        <h2>Create your account</h2>
-        <p class="form-sub">Set up your SYNEXA workspace in under 2 minutes.</p>
+        <p class="form-kicker">{{ 'auth.getStarted' | translate }}</p>
+        <h2>{{ 'auth.createAccountTitle' | translate }}</h2>
+        <p class="form-sub">{{ 'auth.createAccountSub' | translate }}</p>
 
         <div class="success-alert" *ngIf="successMessage">{{ successMessage }}</div>
         <div class="error-alert" *ngIf="errorMessage">{{ errorMessage }}</div>
@@ -31,7 +35,7 @@
         <form [formGroup]="signupForm" (ngSubmit)="onSubmit()">
           <div class="form-row">
             <div class="form-group">
-              <label for="prenom">First name *</label>
+              <label for="prenom">{{ 'auth.firstName' | translate }} *</label>
               <input
                 id="prenom"
                 type="text"
@@ -40,12 +44,12 @@
                 [class.input-error]="signupForm.get('prenom')?.invalid && signupForm.get('prenom')?.touched"
               />
               <span class="field-error" *ngIf="signupForm.get('prenom')?.invalid && signupForm.get('prenom')?.touched">
-                Required field
+                {{ 'auth.requiredField' | translate }}
               </span>
             </div>
 
             <div class="form-group">
-              <label for="nom">Last name *</label>
+              <label for="nom">{{ 'auth.lastName' | translate }} *</label>
               <input
                 id="nom"
                 type="text"
@@ -54,13 +58,13 @@
                 [class.input-error]="signupForm.get('nom')?.invalid && signupForm.get('nom')?.touched"
               />
               <span class="field-error" *ngIf="signupForm.get('nom')?.invalid && signupForm.get('nom')?.touched">
-                Required field
+                {{ 'auth.requiredField' | translate }}
               </span>
             </div>
           </div>
 
           <div class="form-group">
-            <label for="email">Email *</label>
+            <label for="email">{{ 'auth.emailLabel' | translate }} *</label>
             <input
               id="email"
               type="email"
@@ -69,35 +73,35 @@
               [class.input-error]="signupForm.get('email')?.invalid && signupForm.get('email')?.touched"
             />
             <span class="field-error" *ngIf="signupForm.get('email')?.invalid && signupForm.get('email')?.touched">
-              Invalid email format
+              {{ 'auth.invalidEmailFormat' | translate }}
             </span>
           </div>
 
           <div class="form-row">
             <div class="form-group">
-              <label for="entreprise">Company <span class="optional">(optional)</span></label>
-              <input id="entreprise" type="text" formControlName="entreprise" placeholder="Your company" />
+              <label for="entreprise">{{ 'auth.company' | translate }} <span class="optional">{{ 'auth.optional' | translate }}</span></label>
+              <input id="entreprise" type="text" formControlName="entreprise" />
             </div>
 
             <div class="form-group">
-              <label for="telephone">Phone <span class="optional">(optional)</span></label>
+              <label for="telephone">{{ 'auth.phone' | translate }} <span class="optional">{{ 'auth.optional' | translate }}</span></label>
               <input id="telephone" type="tel" formControlName="telephone" placeholder="+216 XX XXX XXX" />
             </div>
           </div>
 
           <div class="form-row">
             <div class="form-group">
-              <label for="password">Password *</label>
+              <label for="password">{{ 'auth.passwordLabel' | translate }} *</label>
               <div class="pwd-wrap">
                 <input
                   id="password"
                   [type]="showPassword ? 'text' : 'password'"
                   formControlName="motDePasse"
-                  placeholder="At least 6 characters"
+                  [placeholder]="'auth.passwordPlaceholderSignup' | translate"
                   [class.input-error]="signupForm.get('motDePasse')?.invalid && signupForm.get('motDePasse')?.touched"
                 />
                 <button type="button" class="pwd-toggle" (click)="togglePassword()">
-                  {{ showPassword ? 'Hide' : 'Show' }}
+                  {{ (showPassword ? 'auth.hide' : 'auth.show') | translate }}
                 </button>
               </div>
               <div class="pwd-strength" *ngIf="signupForm.get('motDePasse')?.value">
@@ -111,40 +115,40 @@
                 <span class="pwd-label" [style.color]="passwordStrength.color">{{ passwordStrength.label }}</span>
               </div>
               <span class="field-error" *ngIf="signupForm.get('motDePasse')?.invalid && signupForm.get('motDePasse')?.touched">
-                Minimum 6 characters required
+                {{ 'auth.minSixChars' | translate }}
               </span>
             </div>
 
             <div class="form-group">
-              <label for="confirm-password">Confirm password *</label>
+              <label for="confirm-password">{{ 'auth.confirmPassword' | translate }} *</label>
               <div class="pwd-wrap">
                 <input
                   id="confirm-password"
                   [type]="showConfirmPassword ? 'text' : 'password'"
                   formControlName="confirmMotDePasse"
-                  placeholder="Repeat your password"
+                  [placeholder]="'auth.confirmPasswordPlaceholder' | translate"
                   [class.input-error]="signupForm.errors?.['passwordMismatch'] && signupForm.get('confirmMotDePasse')?.touched"
                 />
                 <button type="button" class="pwd-toggle" (click)="toggleConfirmPassword()">
-                  {{ showConfirmPassword ? 'Hide' : 'Show' }}
+                  {{ (showConfirmPassword ? 'auth.hide' : 'auth.show') | translate }}
                 </button>
               </div>
               <span class="field-error" *ngIf="signupForm.errors?.['passwordMismatch'] && signupForm.get('confirmMotDePasse')?.touched">
-                Passwords do not match
+                {{ 'auth.passwordsDoNotMatch' | translate }}
               </span>
             </div>
           </div>
 
           <button type="submit" class="btn-submit" [disabled]="loading || signupForm.invalid">
             <span *ngIf="loading" class="spinner"></span>
-            <span *ngIf="!loading">Create account</span>
-            <span *ngIf="loading">Creating...</span>
+            <span *ngIf="!loading">{{ 'auth.createAccount' | translate }}</span>
+            <span *ngIf="loading">{{ 'auth.creating' | translate }}</span>
           </button>
         </form>
 
         <div class="auth-links">
-          <span>Already have an account?</span>
-          <a routerLink="/login">Sign in</a>
+          <span>{{ 'auth.alreadyHaveAccount' | translate }}</span>
+          <a routerLink="/login">{{ 'auth.signIn' | translate }}</a>
         </div>
       </div>
     </section>

@@ -1,13 +1,13 @@
       <!-- TAB: Tableau de bord -->
-      <div *ngIf="activeTab === 'overview'" class="tab-panel">
+      <div class="tab-panel">
 
         <!-- Welcome Banner -->
         <div class="welcome-banner">
           <div class="welcome-banner-deco"><i class="fas fa-user-circle"></i></div>
           <div class="welcome-text">
-            <div class="welcome-badge"><i class="fas fa-circle"></i> Espace actif</div>
-            <h3>Bienvenue, <span class="welcome-name">{{ clientName }}</span></h3>
-            <p>Suivez vos demandes, contactez notre équipe et profitez de notre assistant IA pour obtenir des réponses instantanées.</p>
+            <div class="welcome-badge"><i class="fas fa-circle"></i> {{ 'client.activeSpace' | translate }}</div>
+            <h3>{{ 'client.welcome' | translate }}, <span class="welcome-name">{{ clientName }}</span></h3>
+            <p>{{ 'client.welcomeText' | translate }}</p>
           </div>
         </div>
 
@@ -19,7 +19,7 @@
             </div>
             <div class="quick-stat-info">
               <span class="quick-stat-value">{{ rendezvous.length }}</span>
-              <span class="quick-stat-label">Rendez-vous</span>
+              <span class="quick-stat-label">{{ 'client.appointments' | translate }}</span>
             </div>
           </div>
           <div class="quick-stat-card">
@@ -28,7 +28,7 @@
             </div>
             <div class="quick-stat-info">
               <span class="quick-stat-value">{{ getConfirmedCount() }}</span>
-              <span class="quick-stat-label">Confirmés</span>
+              <span class="quick-stat-label">{{ 'client.confirmed' | translate }}</span>
             </div>
           </div>
           <div class="quick-stat-card">
@@ -37,7 +37,7 @@
             </div>
             <div class="quick-stat-info">
               <span class="quick-stat-value">{{ getPendingCount() }}</span>
-              <span class="quick-stat-label">En attente</span>
+              <span class="quick-stat-label">{{ 'client.pending' | translate }}</span>
             </div>
           </div>
         </div>
@@ -50,8 +50,8 @@
             <div class="dynamic-card-header">
               <div class="dynamic-card-icon rdv-icon"><i class="fas fa-calendar-check"></i></div>
               <div>
-                <h4>Prochain Rendez-vous</h4>
-                <span class="dynamic-card-sub">À venir</span>
+                <h4>{{ 'client.nextAppointment' | translate }}</h4>
+                <span class="dynamic-card-sub">{{ 'client.upcoming' | translate }}</span>
               </div>
             </div>
             <div class="rdv-details" *ngIf="prochainRdv; else noRdv">
@@ -75,7 +75,7 @@
             <ng-template #noRdv>
               <div class="no-data">
                 <i class="fas fa-calendar-times"></i>
-                <span>Aucun rendez-vous planifié</span>
+                <span>{{ 'client.noAppointment' | translate }}</span>
               </div>
             </ng-template>
           </div>
@@ -85,8 +85,8 @@
             <div class="dynamic-card-header">
               <div class="dynamic-card-icon mission-icon"><i class="fas fa-rocket"></i></div>
               <div>
-                <h4>Mission Active</h4>
-                <span class="dynamic-card-sub">Avancement</span>
+                <h4>{{ 'client.activeMission' | translate }}</h4>
+                <span class="dynamic-card-sub">{{ 'client.progress' | translate }}</span>
               </div>
             </div>
             <div class="mission-details" *ngIf="missionActive; else noMission">
@@ -112,18 +112,16 @@
             <ng-template #noMission>
               <div class="no-data">
                 <i class="fas fa-rocket"></i>
-                <span>Aucune mission active</span>
+                <span>{{ 'client.noActiveMission' | translate }}</span>
               </div>
             </ng-template>
           </div>
 
         </div>
 
-
-
         <!-- Services offered -->
         <div class="services-info-section">
-          <h3><i class="fas fa-cogs"></i> Nos Services</h3>
+          <h3><i class="fas fa-cogs"></i> {{ 'client.ourServices' | translate }}</h3>
           <div class="services-scroll">
             <div class="service-mini-card" *ngFor="let s of servicesList">
               <i class="fas fa-check-circle service-check"></i>
@@ -132,200 +130,3 @@
           </div>
         </div>
       </div>
-
-      <!-- TAB: Mes Demandes -->
-      <div *ngIf="activeTab === 'demandes'" class="tab-panel">
-        <div *ngIf="loading" class="loading-state"><div class="spinner"></div></div>
-
-        <div *ngIf="!loading && contacts.length === 0 && rendezvous.length === 0" class="empty-state">
-          <i class="fas fa-inbox"></i>
-          <p>Aucune demande pour le moment</p>
-          <button class="btn-primary" (click)="activeTab='nouvelle'">Créer une demande</button>
-        </div>
-
-        <div *ngIf="contacts.length > 0">
-          <h3 class="sub-title">Messages de contact</h3>
-          <div class="demand-card" *ngFor="let c of contacts">
-            <div class="demand-header">
-              <span class="demand-service">{{ c.service || 'Contact général' }}</span>
-              <span class="demand-badge" [class.lu]="c.lu">{{ c.lu ? 'Lu' : 'En attente' }}</span>
-            </div>
-            <p class="demand-msg">{{ c.message }}</p>
-            <span class="demand-date">{{ c.dateCreation | date:'dd/MM/yyyy' }}</span>
-          </div>
-        </div>
-
-        <div *ngIf="rendezvous.length > 0" style="margin-top:24px;">
-          <h3 class="sub-title">Rendez-vous</h3>
-          <div class="demand-card" *ngFor="let r of rendezvous">
-            <div class="demand-header">
-              <span class="demand-service">{{ r.service || 'Rendez-vous' }}</span>
-              <span class="demand-badge" [class.lu]="r.confirme">{{ r.confirme ? 'Confirmé' : 'En attente' }}</span>
-            </div>
-            <p class="demand-msg">{{ r.message }}</p>
-            <span class="demand-date">{{ r.dateRendezVous | date:'dd/MM/yyyy HH:mm' }}</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- TAB: Nouvelle Demande -->
-      <div *ngIf="activeTab === 'nouvelle'" class="tab-panel">
-        <div class="success-alert" *ngIf="contactSuccess">{{ contactSuccess }}</div>
-        <div class="error-alert" *ngIf="contactError">{{ contactError }}</div>
-        <form [formGroup]="contactForm" (ngSubmit)="submitContact()" class="demand-form">
-          <div class="form-row">
-            <div class="form-group">
-              <label>Prénom & Nom *</label>
-              <input type="text" formControlName="nom" placeholder="Votre nom complet" />
-            </div>
-            <div class="form-group">
-              <label>Email *</label>
-              <input type="email" formControlName="email" [value]="clientEmail" placeholder="votre@email.com" />
-            </div>
-          </div>
-          <div class="form-row">
-            <div class="form-group">
-              <label>Téléphone</label>
-              <input type="tel" formControlName="telephone" placeholder="+216 XX XXX XXX" />
-            </div>
-            <div class="form-group">
-              <label>Entreprise</label>
-              <input type="text" formControlName="entreprise" placeholder="Nom de votre entreprise" />
-            </div>
-          </div>
-          <div class="form-row">
-            <div class="form-group">
-              <label>Service *</label>
-              <select formControlName="service">
-                <option value="">Sélectionnez un service</option>
-                <option *ngFor="let s of servicesList" [value]="s">{{ s }}</option>
-                <option value="Autre">Autre</option>
-              </select>
-            </div>
-            <div class="form-group">
-              <label>Date souhaitée</label>
-              <input type="datetime-local" formControlName="dateRendezVous" />
-            </div>
-          </div>
-          <div class="form-group">
-            <label>Message *</label>
-            <textarea formControlName="message" rows="5" placeholder="Décrivez votre besoin..."></textarea>
-          </div>
-          <button type="submit" class="btn-primary" [disabled]="contactForm.invalid">
-            <i class="fas fa-paper-plane"></i> Envoyer la demande
-          </button>
-        </form>
-      </div>
-
-      <!-- TAB: Assistant IA -->
-      <div *ngIf="activeTab === 'chatbot'" class="tab-panel">
-        <p class="chatbot-intro">Notre assistant intelligent est disponible 24/7 pour répondre à vos questions sur nos services, votre compte et bien plus encore.</p>
-
-        <div class="chatbot-container">
-          <div class="chat-messages" #chatMessages>
-            <div class="chat-message" *ngFor="let msg of chatMessages_list"
-                 [class.user-msg]="msg.auteur === 'utilisateur'"
-                 [class.bot-msg]="msg.auteur === 'bot'">
-              <div class="msg-avatar" *ngIf="msg.auteur === 'bot'">
-                <i class="fas fa-robot"></i>
-              </div>
-              <div class="msg-bubble">
-                <p>{{ msg.texte }}</p>
-                <span class="msg-time">{{ msg.horodatage | date:'HH:mm' }}</span>
-              </div>
-              <div class="msg-avatar user-avatar" *ngIf="msg.auteur === 'utilisateur'">
-                <i class="fas fa-user"></i>
-              </div>
-            </div>
-            <div class="chat-message bot-msg" *ngIf="botTyping">
-              <div class="msg-avatar"><i class="fas fa-robot"></i></div>
-              <div class="msg-bubble typing-bubble">
-                <div class="typing-dots">
-                  <span></span><span></span><span></span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="chat-suggestions" *ngIf="chatMessages_list.length <= 1">
-            <button class="suggestion-btn" (click)="sendSuggestion('Quels services proposez-vous ?')">
-              <i class="fas fa-cogs"></i> Quels services proposez-vous ?
-            </button>
-            <button class="suggestion-btn" (click)="sendSuggestion('Comment prendre rendez-vous ?')">
-              <i class="fas fa-calendar"></i> Comment prendre rendez-vous ?
-            </button>
-            <button class="suggestion-btn" (click)="sendSuggestion('Parlez-moi de SYNEXA')">
-              <i class="fas fa-building"></i> Parlez-moi de SYNEXA
-            </button>
-          </div>
-
-          <form class="chat-input-form" (submit)="sendChatMessage($event)">
-            <input type="text" [(ngModel)]="chatInput" [ngModelOptions]="{standalone: true}"
-                   placeholder="Posez votre question..." [disabled]="botTyping" />
-            <button type="submit" [disabled]="!chatInput.trim() || botTyping">
-              <i class="fas fa-paper-plane"></i>
-            </button>
-          </form>
-        </div>
-      </div>
-
-      <!-- TAB: Contact -->
-      <div *ngIf="activeTab === 'contact'" class="tab-panel">
-        <div class="contact-layout">
-          <div class="contact-form-section">
-            <div class="success-alert" *ngIf="msgSuccess">{{ msgSuccess }}</div>
-            <form [formGroup]="msgForm" (ngSubmit)="submitMessage()" class="demand-form">
-              <div class="form-group">
-                <label>Sujet *</label>
-                <input type="text" formControlName="sujet" placeholder="Sujet de votre message" />
-              </div>
-              <div class="form-group">
-                <label>Message *</label>
-                <textarea formControlName="message" rows="6" placeholder="Votre message..."></textarea>
-              </div>
-              <button type="submit" class="btn-primary" [disabled]="msgForm.invalid">
-                <i class="fas fa-paper-plane"></i> Envoyer le message
-              </button>
-            </form>
-          </div>
-          <div class="contact-info-section">
-            <h3>Informations de Contact</h3>
-            <div class="info-item">
-              <i class="fas fa-map-marker-alt"></i>
-              <div>
-                <strong>Adresse</strong><br>Tunis, Tunisie
-              </div>
-            </div>
-            <div class="info-item">
-              <i class="fas fa-envelope"></i>
-              <div>
-                <strong>Email</strong><br>contact&#64;synexa-consult.com
-              </div>
-            </div>
-            <div class="info-item">
-              <i class="fas fa-phone"></i>
-              <div>
-                <strong>Téléphone</strong><br>+216 XX XXX XXX
-              </div>
-            </div>
-            <div class="info-item">
-              <i class="fas fa-clock"></i>
-              <div>
-                <strong>Horaires</strong><br>Lun-Ven: 8h00 - 18h00
-              </div>
-            </div>
-
-            <div class="faq-mini">
-              <h4><i class="fas fa-question-circle"></i> Questions fréquentes</h4>
-              <div class="faq-item" *ngFor="let faq of faqs" (click)="faq.open = !faq.open">
-                <div class="faq-question">
-                  <span>{{ faq.question }}</span>
-                  <i [class]="faq.open ? 'fas fa-chevron-up' : 'fas fa-chevron-down'"></i>
-                </div>
-                <div class="faq-answer" *ngIf="faq.open">{{ faq.answer }}</div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-

@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ClientService } from '../../core/services/client.service';
+import { LanguageService, AppLang } from '../../core/services/language.service';
 
 @Component({
   selector: 'app-signup',
@@ -32,7 +33,8 @@ export class SignupComponent {
   constructor(
     private fb: FormBuilder,
     private clientService: ClientService,
-    private router: Router
+    private router: Router,
+    private languageService: LanguageService
   ) {
     this.signupForm = this.fb.group({
       prenom: ['', Validators.required],
@@ -81,5 +83,13 @@ export class SignupComponent {
 
   toggleConfirmPassword(): void {
     this.showConfirmPassword = !this.showConfirmPassword;
+  }
+
+  get currentLang(): AppLang {
+    return this.languageService.currentLang;
+  }
+
+  setLang(lang: AppLang): void {
+    this.languageService.use(lang);
   }
 }
